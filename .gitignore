@@ -1,0 +1,17 @@
+.DS_Store
+TODO.md
+node_modules
+bower_components
+build
+public/scripts/templates
+main.exe
+*.swp
+.tern-project
+.idea
+*.iml
+vendor
+*.tgz
+tags
+scripts/data
+scripts/output
+*~

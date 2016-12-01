@@ -1,0 +1,17 @@
+package: github.com/gtra-uncharted-collab/topic-visualization
+import:
+- package: github.com/unchartedsoftware/plog
+- package: github.com/unchartedsoftware/prism
+  subpackages:
+  - generation/elastic
+  - generation/image
+  - store/redis
+- package: github.com/unchartedsoftware/prism-server
+  subpackages:
+  - http
+  - middleware
+  - ws
+- package: github.com/zenazn/goji
+  subpackages:
+  - graceful
+  - web

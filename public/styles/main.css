@@ -1,0 +1,35 @@
+body {
+	margin: 0;
+	color: #FFF;
+	background-color: #000;
+	overflow: hidden;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	font: 14px 'Helvetica Neue', sans-serif;
+}
+
+#map {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
+	height: 100%;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.uncharted-logo {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+}
+
+.uncharted-logo img {
+	width: 200px;
+}
