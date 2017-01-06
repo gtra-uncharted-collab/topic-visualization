@@ -7,7 +7,7 @@ import (
 	"github.com/unchartedsoftware/plog"
 	"github.com/unchartedsoftware/prism"
 	"github.com/unchartedsoftware/prism/generation/elastic"
-	"github.com/unchartedsoftware/prism/generation/image"
+	"github.com/unchartedsoftware/prism/generation/rest"
 	"github.com/unchartedsoftware/prism/store/redis"
 	"github.com/zenazn/goji/graceful"
 
@@ -60,7 +60,7 @@ func NewImagePipeline() *prism.Pipeline {
 	pipeline := prism.NewPipeline()
 
 	// Add tiles types to the pipeline
-	pipeline.Tile("image", image.NewTile())
+	pipeline.Tile("rest", rest.NewTile())
 
 	// Set the maximum concurrent tile requests
 	pipeline.SetMaxConcurrent(256)
@@ -79,7 +79,7 @@ func main() {
 
 	// register the pipelines
 	prism.Register("elastic", NewElasticPipeline())
-	prism.Register("image", NewImagePipeline())
+	prism.Register("rest", NewImagePipeline())
 
 	// create server
 	app := api.New()

@@ -106,10 +106,10 @@ window.startApp = function() {
 		/**
 		 * Top Terms layer
 		 */
-		const topTerms = Layers.topTerms(
-			meta[ES_TYPE],
-			ES_INDEX,
-			requestor);
+		//const topTerms = Layers.topTerms(
+		//	meta[ES_TYPE],
+		//	ES_INDEX,
+		//	requestor);
 		//map.addLayer(topTerms);
 	});
 };

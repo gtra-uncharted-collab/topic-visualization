@@ -57,11 +57,11 @@ module.exports = {
 	 * Base Image Layer
 	 */
 	base: (tileset, requestor) => {
-		const layer = new prism.Layer.Image();
+		const layer = new prism.Layer.Rest();
 		layer.setExt('png');
 		layer.setScheme('http');
 		layer.setEndpoint('a.basemaps.cartocdn.com');
-		layer.requestTile = liveRequestBuffer('image', requestor, tileset, true);
+		layer.requestTile = liveRequestBuffer('rest', requestor, tileset, true);
 		return layer;
 	},
 
@@ -120,15 +120,15 @@ module.exports = {
 	/**
 	 * Top Terms Layer
 	 */
-	topTerms: function(meta, index, requestor) {
-		const layer = new prism.Layer.TopTermCount(meta, {
-			renderer: new prism.Renderer.HTML.TopTerms()
-		});
-		layer.setX('pixel.x', 0, Math.pow(2, 32));
-		layer.setY('pixel.y', Math.pow(2, 32), 0); // TODO: eventually re-ingest
-		layer.setTermsField('hashtags');
-		layer.setTermsCount(5);
-		layer.requestTile = liveRequestJSON('elastic', requestor, index);
-		return layer;
-	},
+	//topTerms: function(meta, index, requestor) {
+	//	const layer = new prism.Layer.TopTermCount(meta, {
+	//		renderer: new prism.Renderer.HTML.TopTerms()
+	//	});
+	//	layer.setX('pixel.x', 0, Math.pow(2, 32));
+	//	layer.setY('pixel.y', Math.pow(2, 32), 0); // TODO: eventually re-ingest
+	//	layer.setTermsField('hashtags');
+	//	layer.setTermsCount(5);
+	//	layer.requestTile = liveRequestJSON('elastic', requestor, index);
+	//	return layer;
+	//},
 };
