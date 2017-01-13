@@ -2,13 +2,11 @@
 
 const $ = require('jquery');
 const prism = require('prism-client');
-const ui = require('prism-ui');
 const parallel = require('async/parallel');
 const Layers = require('./scripts/layer/Layers');
-const Controls = require('./scripts/ui/Controls');
 
 const ES_PIPELINE = 'elastic';
-const ES_INDEX = 'patent_grant_references_v6'; //'trump_twitter';
+const ES_INDEX = 'patent_grant_references_v7'; //'trump_twitter';
 const ES_TYPE = 'datum';
 
 function init(callback) {
@@ -58,8 +56,7 @@ window.startApp = function() {
 
 	// Map control
 	const map = new prism.Map('#map', {
-		continuousZoom: false,
-		zoom: 3
+		continuousZoom: false
 	});
 
 	// Pull meta data and establish a websocket connection for generating tiles
@@ -71,8 +68,6 @@ window.startApp = function() {
 
 		const requestor = res.requestor;
 		const meta = res.meta;
-
-		const menu = new ui.Menu('body');
 
 		/**
 		 * CartoDB layer
@@ -94,12 +89,7 @@ window.startApp = function() {
 			ES_INDEX,
 			'hot',
 			requestor);
-		menu.add(Controls.create(
-			'Heatmap',
-			heatmap,
-			['opacity', 'resolution', 'range']
-		));
-		map.addLayer(heatmap);
+		//map.addLayer(heatmap);
 
 		/**
 		 * Macro layer
@@ -108,12 +98,7 @@ window.startApp = function() {
 			meta[ES_TYPE],
 			ES_INDEX,
 			requestor);
-		menu.add(Controls.create(
-			'Macro',
-			macro,
-			['opacity']
-		));
-		map.addLayer(macro);
+		//map.addLayer(macro);
 
 		/**
 		 * Micro layer
@@ -123,12 +108,16 @@ window.startApp = function() {
 			ES_INDEX,
 			256*32,
 			requestor);
-		// menu.add(Controls.create(
-		// 	'Micro',
-		// 	micro,
-		// 	['opacity']
-		// ));
-		// map.addLayer(micro);
+		//map.addLayer(micro);
+
+		/**
+		 * Count layer
+		 */
+		const count = Layers.count(
+			meta[ES_TYPE],
+			ES_INDEX,
+			requestor);
+		//map.addLayer(count);
 
 		/**
 		 * Micro / Macro layer
@@ -137,11 +126,6 @@ window.startApp = function() {
 			meta[ES_TYPE],
 			ES_INDEX,
 			requestor);
-		// menu.add(Controls.create(
-		// 	'Micro / Macro',
-		// 	microMacro,
-		// 	['opacity']
-		// ));
 		//map.addLayer(microMacro);
 
 		/**
@@ -151,12 +135,16 @@ window.startApp = function() {
 			meta[ES_TYPE],
 			ES_INDEX,
 			requestor);
-		// menu.add(Controls.create(
-		// 	'Word Cloud',
-		// 	wordcloud,
-		// 	['opacity']
-		// ));
 		//map.addLayer(wordcloud);
+
+		/**
+		 * Topic layer
+		 */
+		const topic = Layers.topic(
+			meta[ES_TYPE],
+			ES_INDEX,
+			requestor);
+		map.addLayer(topic);
 
 		/**
 		 * Community Ring layer
@@ -166,24 +154,10 @@ window.startApp = function() {
 			ES_INDEX,
 			256,
 			requestor);
-		// menu.add(Controls.create(
-		// 	'Community',
-		// 	communityRing,
-		// 	['opacity']
-		// ));
-		// map.addLayer(communityRing);
-
-		const communityBucket = Layers.communityBucket(
-			meta[ES_TYPE],
-			ES_INDEX,
-			256,
-			requestor);
-		// menu.add(Controls.create(
-		// 	'Community',
-		// 	communityRing,
-		// 	['opacity']
-		// ));
-		// map.addLayer(communityBucket);
+		communityRing.renderers[0].on('mouseover', () => {console.log('mouseover');});
+		communityRing.renderers[0].on('mouseout', () => {console.log('mouseout');});
+		communityRing.renderers[0].on('click', () => {console.log('click');});
+		//map.addLayer(communityRing);
 
 		/**
 		 * Community Label layer
@@ -193,11 +167,6 @@ window.startApp = function() {
 			ES_INDEX,
 			5,
 			requestor);
-		menu.add(Controls.create(
-			'Community Labels',
-			communityLabel,
-			['opacity']
-		));
-		map.addLayer(communityLabel);
+		//map.addLayer(communityLabel);
 	});
 };

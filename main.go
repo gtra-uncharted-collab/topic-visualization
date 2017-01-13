@@ -8,6 +8,7 @@ import (
 	"github.com/unchartedsoftware/prism"
 	"github.com/unchartedsoftware/prism/generation/elastic"
 	"github.com/unchartedsoftware/prism/generation/file"
+	"github.com/unchartedsoftware/prism/generation/remote"
 	"github.com/unchartedsoftware/prism/generation/rest"
 	"github.com/unchartedsoftware/prism/store/redis"
 	"github.com/zenazn/goji/graceful"
@@ -76,6 +77,24 @@ func NewRESTPipeline() *prism.Pipeline {
 	return pipeline
 }
 
+func NewRemotePipeline() *prism.Pipeline {
+	// Create pipeline
+	pipeline := prism.NewPipeline()
+
+	// Add tiles types to the pipeline
+	pipeline.Tile("topic", remote.NewTopicTile())
+
+	// Set the maximum concurrent tile requests
+	pipeline.SetMaxConcurrent(256)
+	// Set the tile requests queue length
+	pipeline.SetQueueLength(1024)
+
+	// Add a store to the pipeline
+	pipeline.Store(redis.NewStore(redisHost, redisPort, -1))
+
+	return pipeline
+}
+
 func NewFilePipeline() *prism.Pipeline {
 	// Create pipeline
 	pipeline := prism.NewPipeline()
@@ -102,6 +121,7 @@ func main() {
 	prism.Register("elastic", NewElasticPipeline())
 	prism.Register("file", NewFilePipeline())
 	prism.Register("rest", NewRESTPipeline())
+	prism.Register("remote", NewRemotePipeline())
 
 	// create server
 	app := api.New()
