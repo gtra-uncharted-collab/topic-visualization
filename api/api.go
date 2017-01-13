@@ -3,7 +3,6 @@ package api
 import (
 	h "net/http"
 
-	"github.com/gtra-uncharted-collab/topic-visualization/api/routes"
 	"github.com/unchartedsoftware/plog"
 	"github.com/unchartedsoftware/prism-server/http"
 	"github.com/unchartedsoftware/prism-server/middleware"
@@ -34,10 +33,6 @@ func New() h.Handler {
 	// tile request handler
 	log.Infof("Tile HTTP route: '%s'", http.TileRoute)
 	r.Post(http.TileRoute, http.TileHandler)
-
-	// Topics request handler
-	log.Infof("Topics Path route: '%s'", routes.TopicsRoute)
-	r.Post(routes.TopicsRoute, routes.TopicsHandler)
 
 	// add greedy route last
 	r.Get("/*", h.FileServer(h.Dir("./build/public")))

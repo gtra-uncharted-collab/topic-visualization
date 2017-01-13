@@ -1,27 +1,27 @@
 {
-  "name": "topic-visualization",
+  "name": "prism-app-template",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {},
-  "devDependencies": {
+  "author": "Kevin Birk <kbirk@uncharted.software>",
+  "dependencies": {
     "async": "2.1.4",
+    "jquery": "3.1.1",
+    "lodash": "4.17.4",
+    "lumo": "0.4.2",
+    "prism-client": "git@github.com:unchartedsoftware/prism-client.git#prism-refactor",
+    "prism-ui": "git@github.com:unchartedsoftware/prism-ui.git#prism-refactor"
+  },
+  "devDependencies": {
     "babel-preset-es2015": "6.18.0",
     "babelify": "7.3.0",
-    "browserify": "13.1.1",
+    "browserify": "13.3.0",
     "del": "2.2.2",
     "gulp": "3.9.1",
     "gulp-concat": "2.6.1",
     "gulp-csso": "2.0.0",
     "gulp-eslint": "3.0.1",
-    "gulp-filter": "4.0.0",
     "gulp-go": "1.1.0",
-    "gulp-sourcemaps": "2.2.0",
-    "jquery": "3.1.1",
-    "lodash": "4.17.2",
-    "lumo": "0.3.1",
-    "prism-client": "git@github.com:unchartedsoftware/prism-client.git#prism-refactor",
     "run-sequence": "1.2.2",
-    "vinyl-buffer": "1.0.0",
     "vinyl-source-stream": "1.1.0"
   }
 }

@@ -1,7 +1,27 @@
 'use strict';
 
+const _ = require('lodash');
 const $ = require('../util/jQueryAjaxArrayBuffer');
+const lumo = require('lumo');
 const prism = require('prism-client');
+
+const hierarchy = {
+	0: '5',
+	1: '5',
+	2: '5',
+	3: '5',
+	4: '5',
+	5: '5',
+	6: '4',
+	7: '4',
+	8: '4',
+	9: '3',
+	10: '3',
+	11: '3',
+	12: '2',
+	13: '2',
+	14: '2',
+};
 
 function liveRequest(pipeline, requestor, index, type, xyz) {
 	return function(coord, done) {
@@ -21,7 +41,7 @@ function liveRequest(pipeline, requestor, index, type, xyz) {
 			.done(url => {
 				if (this.pyramid.isStale(coord)) {
 					// the tile is now stale, don't waste effort requesting it
-					done(new Error('stale tile'));
+					done(new Error('stale tile'), null);
 					return;
 				}
 				$.ajax({
@@ -32,14 +52,16 @@ function liveRequest(pipeline, requestor, index, type, xyz) {
 					dataType: type
 				}).done(buffer => {
 					done(null, buffer);
-				}).fail((xhr, status, err) => {
+				}).fail((xhr) => {
+					const obj = JSON.parse(xhr.responseText);
+					const err = new Error(obj.error);
 					console.error(err);
-					done(null);
+					done(err, null);
 				});
 			})
 			.fail(err => {
-				console.error('Could not generate tile:', err);
-				done(null);
+				console.error(err);
+				done(err, null);
 			});
 	};
 }
@@ -54,14 +76,27 @@ function liveRequestBuffer(pipeline, requestor, index, xyz = false) {
 
 module.exports = {
 	/**
-	 * Base Image Layer
+	 * Base CartoDB Image Layer
 	 */
-	base: (tileset, requestor) => {
+	cartodb: function(tileset, requestor) {
 		const layer = new prism.Layer.Rest();
-		layer.setExt('png');
 		layer.setScheme('http');
 		layer.setEndpoint('a.basemaps.cartocdn.com');
+		layer.setExt('png');
 		layer.requestTile = liveRequestBuffer('rest', requestor, tileset, true);
+		return layer;
+	},
+
+	/**
+	 * Blank Base Layer
+	 */
+	blank: function() {
+		const layer = new lumo.Layer({
+			renderer: new prism.Renderer.WebGL.Repeat()
+		});
+		layer.requestTile = function(coord, done) {
+			lumo.loadImage('images/base-tile.png', done);
+		};
 		return layer;
 	},
 
@@ -74,10 +109,44 @@ module.exports = {
 				colorRamp: ramp
 			})
 		});
-		layer.setX('pixel.x', 0, Math.pow(2, 32));
-		layer.setY('pixel.y', Math.pow(2, 32), 0); // TODO: eventually re-ingest
+		layer.setX('node.pixel.x', 0, Math.pow(2, 32));
+		layer.setY('node.pixel.y', Math.pow(2, 32), 0); // inverted, re-ingest
+		// layer.setX('pixel.x', 0, Math.pow(2, 32));
+		// layer.setY('pixel.y', 0, Math.pow(2, 32));
 		layer.setResolution(128);
 		layer.requestTile = liveRequestBuffer('elastic', requestor, index);
+		return layer;
+	},
+
+	/**
+	 * S3 Heatmap Layer
+	 */
+	s3Heatmap: function(url, ramp, ext, requestor) {
+		const layer = new prism.Layer.Rest(null, {
+			renderer: new prism.Renderer.WebGL.Heatmap({
+				colorRamp: ramp
+			})
+		});
+		layer.setScheme('http');
+		layer.setEndpoint('s3.amazonaws.com/graph-tiles/');
+		layer.setExt('bin');
+		layer.setPadCoords(true);
+		layer.setResolution(256);
+		layer.setOpacity(0.8);
+		layer.requestTile = liveRequestBuffer('rest', requestor, url);
+		return layer;
+	},
+
+	/**
+	 * Count Layer
+	 */
+	count: function(meta, index, requestor) {
+		const layer = new prism.Layer.Count(meta);
+		layer.setX('node.pixel.x', 0, Math.pow(2, 32));
+		layer.setY('node.pixel.y', Math.pow(2, 32), 0); // inverted, re-ingest
+		// layer.setX('pixel.x', 0, Math.pow(2, 32));
+		// layer.setY('pixel.y', 0, Math.pow(2, 32));
+		layer.requestTile = liveRequestJSON('elastic', requestor, index);
 		return layer;
 	},
 
@@ -87,19 +156,109 @@ module.exports = {
 	macro: function(meta, index, requestor) {
 		const resolution = 256;
 		const layer = new prism.Layer.Macro(meta, {
-			cacheSize: 1024,
 			renderer: new prism.Renderer.WebGL.Macro({
 				maxVertices: resolution * resolution,
 				radius: 4,
 				color: [ 0.4, 1.0, 0.1, 0.8 ]
 			})
 		});
-		layer.setX('pixel.x', 0, Math.pow(2, 32));
-		layer.setY('pixel.y', Math.pow(2, 32), 0); // TODO: eventually re-ingest
+		layer.setX('node.pixel.x', 0, Math.pow(2, 32));
+		layer.setY('node.pixel.y', Math.pow(2, 32), 0); // inverted, re-ingest
+		// layer.setX('pixel.x', 0, Math.pow(2, 32));
+		// layer.setY('pixel.y', 0, Math.pow(2, 32));
 		layer.setResolution(resolution);
 		layer.setLOD(4);
 		layer.requestTile = liveRequestBuffer('elastic', requestor, index);
 		return layer;
+	},
+
+	/**
+	 * Micro Layer
+	 */
+	micro: function(meta, index, count, requestor) {
+		const layer = new prism.Layer.Micro(meta, {
+			renderer: new prism.Renderer.WebGL.Micro({
+				maxVertices: count,
+				radius: 4,
+				color: [ 1.0, 0.4, 0.1, 0.8 ]
+			})
+		});
+		layer.setX('node.pixel.x', 0, Math.pow(2, 32));
+		layer.setY('node.pixel.y', Math.pow(2, 32), 0); // inverted, re-ingest
+		// layer.setX('pixel.x', 0, Math.pow(2, 32));
+		// layer.setY('pixel.y', 0, Math.pow(2, 32));
+		layer.setLOD(4);
+		layer.setHitsCount(count);
+		layer.setIncludeFields([
+			'text',
+		]);
+		layer.requestTile = liveRequestJSON('elastic', requestor, index);
+		return layer;
+	},
+
+	/**
+	 * Micro / Macro Layer
+	 */
+	microMacro: function(meta, index, requestor) {
+
+		const microCount = 2048;
+
+		const count = this.count(meta, index, requestor);
+		const macro = this.macro(meta, index, requestor);
+		const micro = this.micro(meta, index, microCount, requestor);
+
+		// disable both
+		macro.disable();
+		micro.disable();
+
+		const group = new prism.Layer.Group({
+			layers: [
+				count,
+				macro,
+				micro
+			]
+		});
+
+		const swap = function() {
+			// first we find out which level of tiles to inspect.
+			const level = Math.round(count.plot.getTargetZoom());
+			// next we inspect all tiles for that level
+			const tiles = count.pyramid.levels.get(level);
+			if (!tiles) {
+				// no tiles yet, occurs on a fresh zoom
+				return;
+			}
+			// ensure we have tiles
+			if (tiles.length === 0) {
+				return;
+			}
+			// check if they are below the set count
+			const below = _.sumBy(tiles, tile => {
+				return (tile.data.count < microCount) ? 1 : 0;
+			});
+			// swap accordingly
+			if (below === tiles.length) {
+				macro.disable();
+				micro.enable();
+			} else {
+				micro.disable();
+				macro.enable();
+			}
+		};
+
+		count.on('onadd', () => {
+			count.plot.on('zoomend', swap);
+			count.plot.on('panend', swap);
+		});
+
+		count.on('onremove', () => {
+			count.plot.removeListener('zoomend', swap);
+			count.plot.removeListener('panend', swap);
+		});
+
+		count.on('load', swap);
+
+		return group;
 	},
 
 	/**
@@ -110,7 +269,7 @@ module.exports = {
 			renderer: new prism.Renderer.HTML.WordCloud()
 		});
 		layer.setX('pixel.x', 0, Math.pow(2, 32));
-		layer.setY('pixel.y', Math.pow(2, 32), 0); // TODO: eventually re-ingest
+		layer.setY('pixel.y', 0, Math.pow(2, 32));
 		layer.setTermsField('hashtags');
 		layer.setTermsCount(10);
 		layer.requestTile = liveRequestJSON('elastic', requestor, index);
@@ -118,17 +277,143 @@ module.exports = {
 	},
 
 	/**
-	 * Top Terms Layer
+	 * Community Layer
 	 */
-	//topTerms: function(meta, index, requestor) {
-	//	const layer = new prism.Layer.TopTermCount(meta, {
-	//		renderer: new prism.Renderer.HTML.TopTerms()
-	//	});
-	//	layer.setX('pixel.x', 0, Math.pow(2, 32));
-	//	layer.setY('pixel.y', Math.pow(2, 32), 0); // TODO: eventually re-ingest
-	//	layer.setTermsField('hashtags');
-	//	layer.setTermsCount(5);
-	//	layer.requestTile = liveRequestJSON('elastic', requestor, index);
-	//	return layer;
-	//},
+	communityRing: function(meta, index, count, requestor) {
+		const layer = new prism.Layer.Community(meta, {
+			renderer: new prism.Renderer.WebGL.Community({
+				maxVertices: count,
+				radiusField: 'node.radius'
+			})
+		});
+		layer.setX('node.pixel.x', 0, Math.pow(2, 32));
+		layer.setY('node.pixel.y', Math.pow(2, 32), 0); // inverted, re-ingest
+		layer.setHitsCount(count);
+		layer.setSortField('properties.degree');
+		layer.setSortOrder('desc');
+		layer.setIncludeFields([
+			'node.radius',
+			'properties.degree'
+		]);
+		layer.setQuery(() => {
+			const zoom = Math.round(layer.plot.getTargetZoom());
+			return [
+				{
+					equals: {
+						field: 'properties.hierarchyLevel',
+						value: hierarchy[zoom] || 1
+					}
+				},
+				'AND',
+				{
+					equals: {
+						field: 'properties.type',
+						value: 'community'
+					}
+				},
+				'AND',
+				{
+					range: {
+						field: 'properties.numNodes',
+						gte: 10
+					}
+				}
+			];
+		});
+		layer.requestTile = liveRequestJSON('elastic', requestor, index);
+		return layer;
+	},
+
+	/**
+	 * Community Bucket Layer
+	 */
+	communityBucket: function(meta, index, count, requestor) {
+		const layer = new prism.Layer.Community(meta, {
+			renderer: new prism.Renderer.WebGL.CommunityBucket({
+				maxVertices: count,
+				radiusField: 'node.radius',
+				bucketsField: 'applicationDateBuckets'
+			})
+		});
+
+		layer.setX('node.pixel.x', 0, Math.pow(2, 32));
+		layer.setY('node.pixel.y', Math.pow(2, 32), 0); // inverted, re-ingest
+		layer.setHitsCount(count);
+		layer.setSortField('properties.degree');
+		layer.setSortOrder('desc');
+		layer.setIncludeFields([
+			'node.radius',
+			'properties.degree',
+			'applicationDateBuckets'
+		]);
+		layer.setQuery(() => {
+			const zoom = Math.round(layer.plot.getTargetZoom());
+			return [
+				{
+					equals: {
+						field: 'properties.hierarchyLevel',
+						value: hierarchy[zoom] || 1
+					}
+				},
+				'AND',
+				{
+					equals: {
+						field: 'properties.type',
+						value: 'community'
+					}
+				},
+				'AND',
+				{
+					range: {
+						field: 'properties.numNodes',
+						gte: 10
+					}
+				}
+			];
+		});
+		layer.requestTile = liveRequestJSON('elastic', requestor, index);
+		return layer;
+	},
+
+	 /**
+ 	 * Community Label Layer
+ 	 */
+	communityLabel: function(meta, index, count, requestor) {
+		const layer = new prism.Layer.Community(meta, {
+			renderer: new prism.Renderer.HTML.CommunityLabel({
+				labelField: 'description'
+			})
+		});
+		layer.setX('node.pixel.x', 0, Math.pow(2, 32));
+		layer.setY('node.pixel.y', Math.pow(2, 32), 0); // inverted, re-ingest
+		layer.setHitsCount(count);
+		layer.setSortField('properties.degree');
+		layer.setSortOrder('desc');
+		layer.setIncludeFields([
+			'description',
+			'properties.degree'
+		]);
+		layer.setQuery(() => {
+			const zoom = Math.round(layer.plot.getTargetZoom());
+			return [
+				{
+					equals: {
+						field: 'properties.hierarchyLevel',
+						value: hierarchy[zoom] || 1
+					}
+				},
+				'AND',
+				{
+					equals: {
+						field: 'properties.type',
+						value: 'community'
+					}
+				}
+			];
+		});
+		layer.requestTile = liveRequestJSON('elastic', requestor, index);
+		return layer;
+	}
+
+
 };

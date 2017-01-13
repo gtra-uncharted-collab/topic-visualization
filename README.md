@@ -1,4 +1,4 @@
-# Topic Visualization
+# Prism-App-Template
 
 ## Dependencies
 
@@ -12,15 +12,15 @@
 Clone the repository:
 
 ```bash
-mkdir -p $GOPATH/src/github.com/gtra-uncharted-collab
-cd $GOPATH/src/github.com/gtra-uncharted-collab
-git clone git@github.com:gtra-uncharted-collab/topic-visualization.git
+mkdir -p $GOPATH/src/github.com/unchartedsoftware
+cd $GOPATH/src/github.com/unchartedsoftware
+git clone git@github.com:unchartedsoftware/prism-app-template.git
 ```
 
 Install dependencies
 
 ```bash
-cd topic-visualization
+cd prism-app-template
 make install
 ```
 

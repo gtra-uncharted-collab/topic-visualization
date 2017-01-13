@@ -7,11 +7,12 @@ import (
 	"github.com/unchartedsoftware/plog"
 	"github.com/unchartedsoftware/prism"
 	"github.com/unchartedsoftware/prism/generation/elastic"
+	"github.com/unchartedsoftware/prism/generation/file"
 	"github.com/unchartedsoftware/prism/generation/rest"
 	"github.com/unchartedsoftware/prism/store/redis"
 	"github.com/zenazn/goji/graceful"
 
-	"github.com/gtra-uncharted-collab/topic-visualization/api"
+	"github.com/unchartedsoftware/prism-app-template/api"
 )
 
 const (
@@ -37,8 +38,10 @@ func NewElasticPipeline() *prism.Pipeline {
 	pipeline.Query("range", elastic.NewRange)
 
 	// Add tiles types to the pipeline
+	pipeline.Tile("count", elastic.NewCountTile(esHost, esPort))
 	pipeline.Tile("heatmap", elastic.NewHeatmapTile(esHost, esPort))
 	pipeline.Tile("macro", elastic.NewMacroTile(esHost, esPort))
+	pipeline.Tile("micro", elastic.NewMicroTile(esHost, esPort))
 	pipeline.Tile("top-term-count", elastic.NewTopTermCountTile(esHost, esPort))
 
 	// Set the maximum concurrent tile requests
@@ -55,12 +58,30 @@ func NewElasticPipeline() *prism.Pipeline {
 	return pipeline
 }
 
-func NewImagePipeline() *prism.Pipeline {
+func NewRESTPipeline() *prism.Pipeline {
 	// Create pipeline
 	pipeline := prism.NewPipeline()
 
 	// Add tiles types to the pipeline
 	pipeline.Tile("rest", rest.NewTile())
+
+	// Set the maximum concurrent tile requests
+	pipeline.SetMaxConcurrent(256)
+	// Set the tile requests queue length
+	pipeline.SetQueueLength(1024)
+
+	// Add a store to the pipeline
+	pipeline.Store(redis.NewStore(redisHost, redisPort, -1))
+
+	return pipeline
+}
+
+func NewFilePipeline() *prism.Pipeline {
+	// Create pipeline
+	pipeline := prism.NewPipeline()
+
+	// Add tiles types to the pipeline
+	pipeline.Tile("file", file.NewTile())
 
 	// Set the maximum concurrent tile requests
 	pipeline.SetMaxConcurrent(256)
@@ -79,7 +100,8 @@ func main() {
 
 	// register the pipelines
 	prism.Register("elastic", NewElasticPipeline())
-	prism.Register("rest", NewImagePipeline())
+	prism.Register("file", NewFilePipeline())
+	prism.Register("rest", NewRESTPipeline())
 
 	// create server
 	app := api.New()

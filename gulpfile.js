@@ -1,17 +1,20 @@
 'use strict';
 
 const _ = require('lodash');
-const gulp = require('gulp');
+const babel = require('babelify');
+const browserify = require('browserify');
 const concat = require('gulp-concat');
-const source = require('vinyl-source-stream');
+const csso = require('gulp-csso');
 const del = require('del');
 const eslint = require('gulp-eslint');
-const csso = require('gulp-csso');
-const runSequence = require('run-sequence');
+const fs = require('fs');
+const gulp = require('gulp');
 const gulpgo = require('gulp-go');
-const browserify = require('browserify');
+const path = require('path');
+const runSequence = require('run-sequence');
+const source = require('vinyl-source-stream');
 
-const project = 'topic-visualization';
+const project = 'prism-app';
 const publicDir = './public';
 const nodeModules = './node_modules';
 const goPath = process.env.GOPATH;
@@ -25,6 +28,7 @@ const paths = {
 	],
 	links: [
 		`${nodeModules}/prism-client/scripts/**/*.js`,
+		`${nodeModules}/prism-ui/scripts/**/*.js`,
 		`${nodeModules}/lumo/src/**/*.js`,
 	],
 	styles: [
@@ -64,6 +68,11 @@ gulp.task('build-scripts', () => {
 	return browserify(paths.webappRoot, {
 		debug: true,
 		standalone: project
+	}).transform(babel, {
+		global: true,
+		ignore: /\/node_modules\/(?!((lumo\/)|(prism\-client\/)))/,
+		compact: true,
+		presets: [ 'es2015' ]
 	})
 	.bundle()
 	.on('error', function(err) {
@@ -74,17 +83,42 @@ gulp.task('build-scripts', () => {
 	.pipe(gulp.dest(paths.output));
 });
 
+function getPackageStyles(dir = '.', styles = []) {
+	// load package.json, if it exists
+	let json;
+	try {
+		json = require(`./${path.join(dir, 'package.json')}`);
+	} catch(e) {
+		return styles;
+	}
+	// check if it is root, or if it has style attribute
+	if (dir === '.' || json.style) {
+		if (json.style) {
+			// add style to front of array so higher level packages override
+			// nested packages
+			styles.unshift(path.join(dir, json.style));
+		}
+		// check if nested node_modules
+		const modulesDir = path.join(dir, 'node_modules');
+		if (fs.existsSync(modulesDir)) {
+			// get all packages inside
+			fs.readdirSync(modulesDir).forEach(file => {
+				// recurse
+				const packageDir = path.join(dir, 'node_modules', file);
+				if (fs.statSync(packageDir).isDirectory()) {
+					styles = getPackageStyles(packageDir, styles);
+				}
+			});
+		}
+	}
+	return styles;
+}
+
 gulp.task('build-styles', () => {
 	// get all style files inside our package.json
-	const json = require('./package.json');
-	const deps = _.merge(json.dependencies, json.devDependencies);
-	const styles = [].concat(paths.styles);
-	_.keys(deps).forEach(dep => {
-		const p = require(`./node_modules/${dep}/package.json`);
-		if (p.style) {
-			styles.push(`./node_modules/${dep}/${p.style}`);
-		}
-	});
+	let styles = getPackageStyles();
+	// append project scope styles last to override
+	styles = styles.concat(paths.styles);
 	// bundle them
 	return gulp.src(styles)
 		.pipe(csso())
