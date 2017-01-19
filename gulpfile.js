@@ -3,6 +3,9 @@
 const _ = require('lodash');
 const babel = require('babelify');
 const browserify = require('browserify');
+const gulpHandlebars = require('gulp-handlebars');
+const handlebars = require('handlebars');
+const wrap = require('gulp-wrap');
 const concat = require('gulp-concat');
 const csso = require('gulp-csso');
 const del = require('del');
@@ -21,6 +24,9 @@ const goPath = process.env.GOPATH;
 const paths = {
 	serverRoot: './main.go',
 	webappRoot: `${publicDir}/app.js`,
+    templates: [
+        `${publicDir}/templates/**/*.hbs`
+    ],
 	scripts: [
 		`${publicDir}/scripts/**/*.js`,
 		`${publicDir}/app.js`,
@@ -45,6 +51,8 @@ const paths = {
 	],
 	lint: [
 		`${publicDir}/**/*.js`,
+        `!${publicDir}/scripts/templates/*.js`,
+        `!${publicDir}/scripts/templates/**/*.js`
 	],
 	resources: [
 		`${publicDir}/index.html`,
@@ -59,12 +67,12 @@ gulp.task('clean', () => {
 });
 
 gulp.task('lint', () => {
-	return gulp.src(paths.scripts)
+	return gulp.src(paths.lint)
 		.pipe(eslint())
 		.pipe(eslint.format());
 });
 
-gulp.task('build-scripts', () => {
+gulp.task('build-scripts', ['build-templates'], () => {
 	return browserify(paths.webappRoot, {
 		debug: true,
 		standalone: project
@@ -81,6 +89,16 @@ gulp.task('build-scripts', () => {
 	})
 	.pipe(source(`${project}.js`))
 	.pipe(gulp.dest(paths.output));
+});
+
+gulp.task('build-templates', function() {
+    return gulp.src(paths.templates)
+        .pipe(gulpHandlebars({
+            // Pass your local handlebars version
+            handlebars: handlebars
+        }))
+        .pipe(wrap('(function(){const handlebars=require("handlebars");module.exports=handlebars.template(<%= contents %>);}());'))
+        .pipe(gulp.dest(`${publicDir}/scripts/templates/`));
 });
 
 function getPackageStyles(dir = '.', styles = []) {
@@ -141,6 +159,7 @@ gulp.task('build', done => {
 		],
 		[
 			'build-scripts',
+            'build-templates',
 			'build-styles',
 			'copy-resources'
 		],
@@ -169,6 +188,8 @@ gulp.task('watch', () => {
 	gulp.watch(paths.scripts.concat(paths.links), ['build-scripts']);
 	// css
 	gulp.watch(paths.styles, ['build-styles']);
+	// templates
+    gulp.watch(paths.templates, ['build-templates']);
 	// misc
 	gulp.watch(paths.resources, ['copy-resources']);
 });

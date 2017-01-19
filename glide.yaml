@@ -1,4 +1,4 @@
-package: github.com/unchartedsoftware/prism-app-template
+package: github.com/gtra-uncharted-collab/topic-visualization
 import:
 - package: github.com/unchartedsoftware/plog
 - package: github.com/unchartedsoftware/prism

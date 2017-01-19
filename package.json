@@ -1,5 +1,5 @@
 {
-  "name": "prism-app-template",
+  "name": "topic-visualization",
   "version": "0.1.0",
   "private": true,
   "author": "Kevin Birk <kbirk@uncharted.software>",
@@ -21,6 +21,9 @@
     "gulp-csso": "2.0.0",
     "gulp-eslint": "3.0.1",
     "gulp-go": "1.1.0",
+    "gulp-handlebars": "4.0.0",
+    "gulp-wrap": "0.13.0",
+    "handlebars": "4.0.5",
     "run-sequence": "1.2.2",
     "vinyl-source-stream": "1.1.0"
   }

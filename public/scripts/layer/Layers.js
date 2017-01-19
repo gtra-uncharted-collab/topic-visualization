@@ -271,6 +271,7 @@ module.exports = {
 		layer.setTileCount(1);
 		layer.setRequestId('1');
 		layer.requestTile = liveRequestJSON('remote', requestor, index);
+		layer.mute();
 		return layer;
 	},
 

@@ -2,14 +2,16 @@
 
 const $ = require('jquery');
 const prism = require('prism-client');
+const lumo = require('lumo');
 const parallel = require('async/parallel');
 const Layers = require('./scripts/layer/Layers');
+const TopicDriver = require('./scripts/ui/TopicDriver');
 
 const ES_PIPELINE = 'elastic';
 const ES_INDEX = 'patent_grant_references_v7'; //'trump_twitter';
 const ES_TYPE = 'datum';
 
-function init(callback) {
+function init(plot, callback) {
 	const req = {};
 	// meta data reqs
 	req.meta = done => {
@@ -37,6 +39,10 @@ function init(callback) {
 			done(null, requestor);
 		});
 	};
+
+	const control = new TopicDriver('Topics', plot);
+	$('.tile-controls').append(control.getElement());
+
 	// request everything at once in a blaze of glory
 	parallel(req, (err, res) => {
 		// check for error
@@ -55,12 +61,12 @@ function init(callback) {
 window.startApp = function() {
 
 	// Map control
-	const map = new prism.Map('#map', {
+	const map = new lumo.Plot('#map', {
 		continuousZoom: false
 	});
 
 	// Pull meta data and establish a websocket connection for generating tiles
-	init((err, res) =>{
+	init(map, (err, res) =>{
 		if (err) {
 			console.error(err);
 			return;
