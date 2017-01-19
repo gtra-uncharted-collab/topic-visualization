@@ -36,22 +36,22 @@ body {
 }
 
 .tile-controls {
-    position: absolute;
-    right: 10px;
-    bottom: 20px;
-    z-index: 1;
+	position: absolute;
+	right: 10px;
+	bottom: 20px;
+	z-index: 1;
 }
 
 .topic-parameter-group {
-    padding-top: 10px;
-    padding-bottom: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .topic-parameter {
-    padding: 5px;
+	padding: 5px;
 }
 
 .topic-term {
-    float: right;
-    width: 70%;
+	float: right;
+	width: 70%;
 }

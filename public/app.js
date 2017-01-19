@@ -62,8 +62,16 @@ window.startApp = function() {
 
 	// Map control
 	const map = new lumo.Plot('#map', {
-		continuousZoom: false
+		continuousZoom: false,
+		zoom: 10
 	});
+	// Center on NYC.
+	map.viewport.centerOn(
+		{
+			x: 0.2944 * Math.pow(2, 10) * 256, 
+			y: 0.6242 * Math.pow(2, 10) * 256
+		}
+	);
 
 	// Pull meta data and establish a websocket connection for generating tiles
 	init(map, (err, res) =>{
@@ -79,13 +87,13 @@ window.startApp = function() {
 		 * CartoDB layer
 		 */
 		const carto = Layers.cartodb('dark_nolabels', requestor);
-		//map.addLayer(carto);
+		map.addLayer(carto);
 
 		/**
 		 * Base layer
 		 */
 		const base = Layers.blank();
-		map.addLayer(base);
+		//map.addLayer(base);
 
 		/**
 		 * Heatmap layer
