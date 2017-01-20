@@ -12,6 +12,9 @@ all:
 	@echo "  fmt           - format the code with gofmt"
 	@echo "  install       - install dependencies"
 
+clean:
+		@rm -rf ./build
+
 lint:
 	@go vet $(shell glide novendor)
 	@go list ./... | grep -v /vendor/ | xargs -L1 golint
