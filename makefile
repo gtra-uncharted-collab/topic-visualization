@@ -25,6 +25,12 @@ fmt:
 build: lint
 	@go build $(shell glide novendor)
 
+deploy: clean lint
+	@GOARCH=amd64 GOOS=linux CGO_ENABLED=0 go build -o ./build/server.bin ./main.go
+	@cp -r ./build/server.bin ./deploy/server
+	@gulp build
+	@cp -r ./build/public ./deploy/server
+
 install:
 	@go get github.com/golang/lint/golint
 	@go get github.com/Masterminds/glide
