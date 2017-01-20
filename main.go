@@ -13,7 +13,7 @@ import (
 	"github.com/unchartedsoftware/prism/store/redis"
 	"github.com/zenazn/goji/graceful"
 
-	"github.com/unchartedsoftware/prism-app-template/api"
+	"github.com/gtra-uncharted-collab/topic-visualization/api"
 )
 
 const (
