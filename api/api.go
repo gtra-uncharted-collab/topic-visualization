@@ -2,12 +2,17 @@ package api
 
 import (
 	h "net/http"
+	"os"
 
 	"github.com/unchartedsoftware/plog"
 	"github.com/unchartedsoftware/prism-server/http"
 	"github.com/unchartedsoftware/prism-server/middleware"
 	"github.com/unchartedsoftware/prism-server/ws"
 	"github.com/zenazn/goji/web"
+)
+
+const (
+	defaultPublicDir = "./build/public"
 )
 
 // New returns a new Goji Mux handler to process HTTP requests.
@@ -35,6 +40,12 @@ func New() h.Handler {
 	r.Post(http.TileRoute, http.TileHandler)
 
 	// add greedy route last
-	r.Get("/*", h.FileServer(h.Dir("./build/public")))
+	publicDir := os.Getenv("PUBLIC_DIR")
+	if publicDir == "" {
+		publicDir = defaultPublicDir
+	}
+	log.Infof("Public dir: '%s'", publicDir)
+	r.Get("/*", h.FileServer(h.Dir(publicDir)))
+
 	return r
 }

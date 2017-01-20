@@ -7,6 +7,7 @@ all:
 	@echo ""
 	@echo "commands:"
 	@echo "  build         - build the source code"
+	@echo "  deploy        - build and copy the dist binary for dockerization"
 	@echo "  lint          - lint the source code"
 	@echo "  test          - test the source code"
 	@echo "  fmt           - format the code with gofmt"
@@ -32,7 +33,7 @@ deploy: clean lint
 	@GOARCH=amd64 GOOS=linux CGO_ENABLED=0 go build -o ./build/server.bin ./main.go
 	@cp -r ./build/server.bin ./deploy/server
 	@gulp build
-	@cp -r ./build/public ./deploy/server
+	@cp -r ./build/public ./deploy/public
 
 install:
 	@go get github.com/golang/lint/golint
