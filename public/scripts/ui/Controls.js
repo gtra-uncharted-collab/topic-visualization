@@ -1,7 +1,7 @@
 'use strict';
 
 // const moment = require('moment');
-const ui = require('prism-ui');
+const ui = require('veldt-ui');
 
 function createOpacitySlider(layer) {
 	return new ui.Slider({

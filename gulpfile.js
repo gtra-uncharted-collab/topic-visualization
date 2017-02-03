@@ -17,7 +17,7 @@ const path = require('path');
 const runSequence = require('run-sequence');
 const source = require('vinyl-source-stream');
 
-const project = 'prism-app';
+const project = 'veldt-app';
 const publicDir = './public';
 const nodeModules = './node_modules';
 const goPath = process.env.GOPATH;
@@ -33,8 +33,8 @@ const paths = {
 		`${publicDir}/config.js`
 	],
 	links: [
-		`${nodeModules}/prism-client/scripts/**/*.js`,
-		`${nodeModules}/prism-ui/scripts/**/*.js`,
+		`${nodeModules}/veldt-client/scripts/**/*.js`,
+		`${nodeModules}/veldt-ui/scripts/**/*.js`,
 		`${nodeModules}/lumo/src/**/*.js`,
 	],
 	styles: [
@@ -43,8 +43,8 @@ const paths = {
 	],
 	go: [
 		'.',
-		`${goPath}/src/github.com/unchartedsoftware/prism`,
-		`${goPath}/src/github.com/unchartedsoftware/prism-server`
+		`${goPath}/src/github.com/unchartedsoftware/veldt`,
+		`${goPath}/src/github.com/unchartedsoftware/veldt-api`
 	],
 	index: [
 		`${publicDir}/index.html`
@@ -78,7 +78,7 @@ gulp.task('build-scripts', ['build-templates'], () => {
 		standalone: project
 	}).transform(babel, {
 		global: true,
-		ignore: /\/node_modules\/(?!((lumo\/)|(prism\-client\/)))/,
+		ignore: /\/node_modules\/(?!((lumo\/)|(veldt\-client\/)))/,
 		compact: true,
 		presets: [ 'es2015' ]
 	})

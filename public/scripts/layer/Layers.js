@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const $ = require('../util/jQueryAjaxArrayBuffer');
 const lumo = require('lumo');
-const prism = require('prism-client');
+const veldt = require('veldt-client');
 
 function liveRequest(pipeline, requestor, index, type, xyz) {
 	return function(coord, done) {
@@ -61,7 +61,7 @@ module.exports = {
 	 * Base CartoDB Image Layer
 	 */
 	cartodb: function(tileset, requestor) {
-		const layer = new prism.Layer.Rest();
+		const layer = new veldt.Layer.Rest();
 		layer.setScheme('http');
 		layer.setEndpoint('a.basemaps.cartocdn.com');
 		layer.setExt('png');
@@ -74,7 +74,7 @@ module.exports = {
 	 */
 	blank: function() {
 		const layer = new lumo.Layer({
-			renderer: new prism.Renderer.WebGL.Repeat()
+			renderer: new veldt.Renderer.WebGL.Repeat()
 		});
 		layer.requestTile = function(coord, done) {
 			lumo.loadImage('images/base-tile.png', done);
@@ -86,8 +86,8 @@ module.exports = {
 	 * Heatmap Layer
 	 */
 	heatmap: function(meta, index, ramp, requestor) {
-		const layer = new prism.Layer.Heatmap(meta, {
-			renderer: new prism.Renderer.WebGL.Heatmap({
+		const layer = new veldt.Layer.Heatmap(meta, {
+			renderer: new veldt.Renderer.WebGL.Heatmap({
 				colorRamp: ramp
 			})
 		});
@@ -102,8 +102,8 @@ module.exports = {
 	 * S3 Heatmap Layer
 	 */
 	s3Heatmap: function(url, ramp, ext, requestor) {
-		const layer = new prism.Layer.Rest(null, {
-			renderer: new prism.Renderer.WebGL.Heatmap({
+		const layer = new veldt.Layer.Rest(null, {
+			renderer: new veldt.Renderer.WebGL.Heatmap({
 				colorRamp: ramp
 			})
 		});
@@ -121,7 +121,7 @@ module.exports = {
 	 * Count Layer
 	 */
 	count: function(meta, index, requestor) {
-		const layer = new prism.Layer.Count(meta);
+		const layer = new veldt.Layer.Count(meta);
 		layer.setX('pixel.x', 0, Math.pow(2, 32));
 		layer.setY('pixel.y', 0, Math.pow(2, 32));
 		layer.requestTile = liveRequestJSON('elastic', requestor, index);
@@ -133,8 +133,8 @@ module.exports = {
 	 */
 	macro: function(meta, index, requestor) {
 		const resolution = 256;
-		const layer = new prism.Layer.Macro(meta, {
-			renderer: new prism.Renderer.WebGL.Macro({
+		const layer = new veldt.Layer.Macro(meta, {
+			renderer: new veldt.Renderer.WebGL.Macro({
 				maxVertices: resolution * resolution,
 				radius: 6,
 				color: [ 0.4, 1.0, 0.1, 0.8 ]
@@ -152,8 +152,8 @@ module.exports = {
 	 * Micro Layer
 	 */
 	micro: function(meta, index, count, requestor) {
-		const layer = new prism.Layer.Micro(meta, {
-			renderer: new prism.Renderer.WebGL.Micro({
+		const layer = new veldt.Layer.Micro(meta, {
+			renderer: new veldt.Renderer.WebGL.Micro({
 				maxVertices: count,
 				radius: 6,
 				color: [ 1.0, 0.4, 0.1, 0.8 ]
@@ -185,7 +185,7 @@ module.exports = {
 		macro.disable();
 		micro.disable();
 
-		const group = new prism.Layer.Group({
+		const group = new veldt.Layer.Group({
 			layers: [
 				count,
 				macro,
@@ -246,8 +246,8 @@ module.exports = {
 	 * Wordcloud Layer
 	 */
 	wordcloud: function(meta, index, requestor) {
-		const layer = new prism.Layer.TopTermCount(meta, {
-			renderer: new prism.Renderer.HTML.WordCloud()
+		const layer = new veldt.Layer.TopTermCount(meta, {
+			renderer: new veldt.Renderer.HTML.WordCloud()
 		});
 		layer.setX('pixel.x', 0, Math.pow(2, 32));
 		layer.setY('pixel.y', 0, Math.pow(2, 32));
@@ -261,17 +261,13 @@ module.exports = {
 	 * Topic Layer
 	 */
 	topic: function(meta, index, requestor) {
-		const layer = new prism.Layer.Topic(meta, {
-			renderer: new prism.Renderer.HTML.WordCloud()
+		const layer = new veldt.Layer.Topic(meta, {
+			renderer: new veldt.Renderer.HTML.WordCloud()
 		});
 		layer.setX('pixel.x', 0, Math.pow(2, 32));
 		layer.setY('pixel.y', 0, Math.pow(2, 32));
-		layer.setInclude([]);
-		layer.setExclude([]);
-		layer.setTileCount(1);
-		layer.setRequestId('1');
-		layer.requestTile = liveRequestJSON('remote', requestor, index);
 		layer.mute();
+		layer.requestTile = liveRequestJSON('remote', requestor, index);
 		return layer;
 	},
 
@@ -279,8 +275,8 @@ module.exports = {
 	 * Community Layer
 	 */
 	communityRing: function(meta, index, count, requestor) {
-		const layer = new prism.Layer.Community(meta, {
-			renderer: new prism.Renderer.WebGL.Community({
+		const layer = new veldt.Layer.Community(meta, {
+			renderer: new veldt.Renderer.WebGL.Community({
 				maxVertices: count,
 				radiusField: 'node.radius'
 			})
@@ -347,8 +343,8 @@ module.exports = {
  	 * Community Label Layer
  	 */
 	communityLabel: function(meta, index, count, requestor) {
-		const layer = new prism.Layer.Community(meta, {
-			renderer: new prism.Renderer.HTML.CommunityLabel({
+		const layer = new veldt.Layer.Community(meta, {
+			renderer: new veldt.Renderer.HTML.CommunityLabel({
 				labelField: 'description'
 			})
 		});

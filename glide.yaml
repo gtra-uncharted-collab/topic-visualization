@@ -1,12 +1,12 @@
 package: github.com/gtra-uncharted-collab/topic-visualization
 import:
 - package: github.com/unchartedsoftware/plog
-- package: github.com/unchartedsoftware/prism
+- package: github.com/unchartedsoftware/veldt
   subpackages:
   - generation/elastic
   - generation/image
   - store/redis
-- package: github.com/unchartedsoftware/prism-server
+- package: github.com/unchartedsoftware/veldt-api
   subpackages:
   - http
   - middleware

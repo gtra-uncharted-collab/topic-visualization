@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/unchartedsoftware/plog"
-	"github.com/unchartedsoftware/prism-server/http"
-	"github.com/unchartedsoftware/prism-server/middleware"
-	"github.com/unchartedsoftware/prism-server/ws"
+	"github.com/unchartedsoftware/veldt-api/http"
+	"github.com/unchartedsoftware/veldt-api/middleware"
+	"github.com/unchartedsoftware/veldt-api/ws"
 	"github.com/zenazn/goji/web"
 )
 

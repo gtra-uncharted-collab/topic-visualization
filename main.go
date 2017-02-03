@@ -5,12 +5,12 @@ import (
 	"syscall"
 
 	"github.com/unchartedsoftware/plog"
-	"github.com/unchartedsoftware/prism"
-	"github.com/unchartedsoftware/prism/generation/elastic"
-	"github.com/unchartedsoftware/prism/generation/file"
-	"github.com/unchartedsoftware/prism/generation/remote"
-	"github.com/unchartedsoftware/prism/generation/rest"
-	"github.com/unchartedsoftware/prism/store/redis"
+	"github.com/unchartedsoftware/veldt"
+	"github.com/unchartedsoftware/veldt/generation/elastic"
+	"github.com/unchartedsoftware/veldt/generation/file"
+	"github.com/unchartedsoftware/veldt/generation/remote"
+	"github.com/unchartedsoftware/veldt/generation/rest"
+	"github.com/unchartedsoftware/veldt/store/redis"
 	"github.com/zenazn/goji/graceful"
 
 	"github.com/gtra-uncharted-collab/topic-visualization/api"
@@ -24,9 +24,9 @@ const (
 	redisPort = "6379"
 )
 
-func NewElasticPipeline() *prism.Pipeline {
+func NewElasticPipeline() *veldt.Pipeline {
 	// Create pipeline
-	pipeline := prism.NewPipeline()
+	pipeline := veldt.NewPipeline()
 
 	// Add boolean expression types
 	pipeline.Binary(elastic.NewBinaryExpression)
@@ -59,9 +59,9 @@ func NewElasticPipeline() *prism.Pipeline {
 	return pipeline
 }
 
-func NewRESTPipeline() *prism.Pipeline {
+func NewRESTPipeline() *veldt.Pipeline {
 	// Create pipeline
-	pipeline := prism.NewPipeline()
+	pipeline := veldt.NewPipeline()
 
 	// Add tiles types to the pipeline
 	pipeline.Tile("rest", rest.NewTile())
@@ -77,9 +77,9 @@ func NewRESTPipeline() *prism.Pipeline {
 	return pipeline
 }
 
-func NewRemotePipeline() *prism.Pipeline {
+func NewRemotePipeline() *veldt.Pipeline {
 	// Create pipeline
-	pipeline := prism.NewPipeline()
+	pipeline := veldt.NewPipeline()
 
 	// Add tiles types to the pipeline
 	pipeline.Tile("topic", remote.NewTopicTile())
@@ -95,9 +95,9 @@ func NewRemotePipeline() *prism.Pipeline {
 	return pipeline
 }
 
-func NewFilePipeline() *prism.Pipeline {
+func NewFilePipeline() *veldt.Pipeline {
 	// Create pipeline
-	pipeline := prism.NewPipeline()
+	pipeline := veldt.NewPipeline()
 
 	// Add tiles types to the pipeline
 	pipeline.Tile("file", file.NewTile())
@@ -118,10 +118,10 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// register the pipelines
-	prism.Register("elastic", NewElasticPipeline())
-	prism.Register("file", NewFilePipeline())
-	prism.Register("rest", NewRESTPipeline())
-	prism.Register("remote", NewRemotePipeline())
+	veldt.Register("elastic", NewElasticPipeline())
+	veldt.Register("file", NewFilePipeline())
+	veldt.Register("rest", NewRESTPipeline())
+	veldt.Register("remote", NewRemotePipeline())
 
 	// create server
 	app := api.New()
@@ -130,7 +130,7 @@ func main() {
 	graceful.AddSignal(syscall.SIGINT, syscall.SIGTERM)
 
 	// start server
-	log.Infof("Prism server listening on port %s", port)
+	log.Infof("Veldt server listening on port %s", port)
 	err := graceful.ListenAndServe(":"+port, app)
 	if err != nil {
 		log.Error(err)

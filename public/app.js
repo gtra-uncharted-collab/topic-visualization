@@ -1,7 +1,7 @@
 'use strict';
 
 const $ = require('jquery');
-const prism = require('prism-client');
+const veldt = require('veldt-client');
 const lumo = require('lumo');
 const parallel = require('async/parallel');
 const Layers = require('./scripts/layer/Layers');
@@ -35,7 +35,7 @@ function init(plot, callback) {
 	};
 	// tile requestor
 	req.requestor = done => {
-		const requestor = new prism.Requestor('tile', () => {
+		const requestor = new veldt.Requestor('tile', () => {
 			done(null, requestor);
 		});
 	};
@@ -68,7 +68,7 @@ window.startApp = function() {
 	// Center on NYC.
 	map.viewport.centerOn(
 		{
-			x: 0.2944 * Math.pow(2, 10) * 256, 
+			x: 0.2944 * Math.pow(2, 10) * 256,
 			y: 0.6242 * Math.pow(2, 10) * 256
 		}
 	);

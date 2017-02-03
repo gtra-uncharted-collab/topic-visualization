@@ -24,10 +24,11 @@ test:
 	@go test $(shell glide novendor)
 
 fmt:
-	@go fmt $(shell glide novendor)
+	@go fmt $(NOVENDOR)
+	@./node_modules/.bin/jsfmt -w ./public/scripts ./public/*.js
 
-build: lint
-	@go build $(shell glide novendor)
+build: clean lint
+	@go build -o ./build/server.bin ./main.go
 
 deploy: clean lint
 	@GOARCH=amd64 GOOS=linux CGO_ENABLED=0 go build -o ./build/server.bin ./main.go
