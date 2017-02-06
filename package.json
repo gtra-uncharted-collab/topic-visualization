@@ -7,7 +7,7 @@
     "async": "2.1.4",
     "jquery": "3.1.1",
     "lodash": "4.17.4",
-    "lumo": "0.4.2",
+    "lumo": "0.6.0",
     "veldt": "git@github.com:unchartedsoftware/veldt-js.git",
     "veldt-ui": "git@github.com:unchartedsoftware/veldt-ui.git"
   },

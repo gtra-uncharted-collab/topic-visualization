@@ -168,9 +168,6 @@ window.startApp = function() {
 			ES_INDEX,
 			256,
 			requestor);
-		communityRing.renderers[0].on('mouseover', () => {console.log('mouseover');});
-		communityRing.renderers[0].on('mouseout', () => {console.log('mouseout');});
-		communityRing.renderers[0].on('click', () => {console.log('click');});
 		//map.addLayer(communityRing);
 
 		/**
