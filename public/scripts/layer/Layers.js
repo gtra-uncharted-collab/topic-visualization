@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const $ = require('../util/jQueryAjaxArrayBuffer');
 const lumo = require('lumo');
-const veldt = require('veldt-js');
+const veldt = require('veldt');
 
 function liveRequest(pipeline, requestor, index, type, xyz) {
 	return function(coord, done) {

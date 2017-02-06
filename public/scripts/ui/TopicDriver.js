@@ -2,7 +2,7 @@
     'use strict';
 
     const ui = require('veldt-ui');
-    const veldt = require('veldt-js');
+    const veldt = require('veldt');
     const template = require('../templates/TopicDriver');
     const $ = require('jquery');
 
