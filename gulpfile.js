@@ -33,7 +33,7 @@ const paths = {
 		`${publicDir}/config.js`
 	],
 	links: [
-		`${nodeModules}/veldt-client/scripts/**/*.js`,
+		`${nodeModules}/veldt-js/scripts/**/*.js`,
 		`${nodeModules}/veldt-ui/scripts/**/*.js`,
 		`${nodeModules}/lumo/src/**/*.js`,
 	],
@@ -78,7 +78,7 @@ gulp.task('build-scripts', ['build-templates'], () => {
 		standalone: project
 	}).transform(babel, {
 		global: true,
-		ignore: /\/node_modules\/(?!((lumo\/)|(veldt\-client\/)))/,
+		ignore: /\/node_modules\/(?!((lumo\/)|(veldt\-js\/)))/,
 		compact: true,
 		presets: [ 'es2015' ]
 	})

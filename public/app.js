@@ -1,7 +1,7 @@
 'use strict';
 
 const $ = require('jquery');
-const veldt = require('veldt-client');
+const veldt = require('veldt-js');
 const lumo = require('lumo');
 const parallel = require('async/parallel');
 const Layers = require('./scripts/layer/Layers');

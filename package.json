@@ -8,7 +8,7 @@
     "jquery": "3.1.1",
     "lodash": "4.17.4",
     "lumo": "0.4.2",
-    "veldt-client": "git@github.com:unchartedsoftware/veldt-client.git",
+    "veldt-js": "git@github.com:unchartedsoftware/veldt-js.git",
     "veldt-ui": "git@github.com:unchartedsoftware/veldt-ui.git"
   },
   "devDependencies": {
