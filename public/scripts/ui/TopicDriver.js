@@ -19,33 +19,22 @@
                 this.onShowTopics();
             });
 
-            const sliderFrom = this._createSearchDepthSlider(value => {
-                this.timeFrom = value;
-            }, this.timeFrom);
-            $('#slider-from').append(slider1.getElement());
-
-            const sliderTo = this._createSearchDepthSlider(value => {
-                this.timeTo = value;
-            }, this.timeTo);
-            $('#slider-to').append(slider2.getElement());
-
             this.show();
         }
 
-        _createSearchDepthSlider(onSlideStop, initialValue) {
-            return new ui.Slider({
-                label: 'Search Depth',
-                min: 1,
-                max: Config.maxGraphSearchDepth,
-                step: 1,
-                initialValue: initialValue,
-                formatter: value => {
-                    return value.toFixed();
-                },
-                slideStop: value => {
-                    if(_.isFunction(onSlideStop)){
-                        onSlideStop(value);
-                    }
+        test() {
+            const timeSlider = this._createSlider(values => {
+                this.timeFrom = values[0];
+                this.timeTo = values[1];
+            });
+            $('#slider-time').append(timeSlider.getElement());
+        }
+
+        _createSlider(onSlideStop) {
+            return new DateSliderGTRA({
+                label: 'Time Range',
+                slideStop: values => {
+                    onSlideStop(values);
                 }
             });
         }
@@ -62,16 +51,15 @@
 
         // Actions
         onShowTopics() {
+            this.test()
             const include = $('[name=terms-include]').val();
             const exclude = $('[name=terms-exclude]').val();
             const exclusiveness = this.getIntParameter('algo-exclusiveness') || 0;
             const clusterCount = this.getIntParameter('count-cluster') || 3;
             const wordCount = this.getIntParameter('count-word') || 3;
-            const timeFrom = this.getIntParameter('time-from') || 3;
-            const timeTo = this.getIntParameter('time-to') || 3;
 
             // Determine which tiles are in view.
-            const coords = this.plot.viewport.getVisibleCoords(this.plot.tileSize, this.plot.zoom);
+            const coords = this.plot.getVisibleCoords(this.plot.tileSize, this.plot.zoom);
 
             // Refresh all tiles in view. Unmuting requests all tiles in view!
             const topicLayer = this.plot.layers.find(l => {
@@ -83,8 +71,8 @@
             topicLayer.setExclusiveness(exclusiveness);
             topicLayer.setTopicWordCount(wordCount);
             topicLayer.setTopicClusterCount(clusterCount);
-            topicLayer.setTimeFrom(timeFrom);
-            topicLayer.setTimeTo(timeTo);
+            topicLayer.setTimeFrom(this.timeFrom);
+            topicLayer.setTimeTo(this.timeTo);
 
             if (topicLayer.hasUpdatedParameters()) {
                 // All previously loaded tiles are no longer relevant.
