@@ -42,6 +42,7 @@ function init(plot, callback) {
 
 	const control = new TopicDriver('Topics', plot);
 	$('.tile-controls').append(control.getElement());
+	control.show()
 
 	// request everything at once in a blaze of glory
 	parallel(req, (err, res) => {
@@ -90,68 +91,6 @@ window.startApp = function() {
 		map.addLayer(carto);
 
 		/**
-		 * Base layer
-		 */
-		const base = Layers.blank();
-		//map.addLayer(base);
-
-		/**
-		 * Heatmap layer
-		 */
-		const heatmap = Layers.heatmap(
-			meta[ES_TYPE],
-			ES_INDEX,
-			'hot',
-			requestor);
-		//map.addLayer(heatmap);
-
-		/**
-		 * Macro layer
-		 */
-		const macro = Layers.macro(
-			meta[ES_TYPE],
-			ES_INDEX,
-			requestor);
-		//map.addLayer(macro);
-
-		/**
-		 * Micro layer
-		 */
-		const micro = Layers.micro(
-			meta[ES_TYPE],
-			ES_INDEX,
-			256*32,
-			requestor);
-		//map.addLayer(micro);
-
-		/**
-		 * Count layer
-		 */
-		const count = Layers.count(
-			meta[ES_TYPE],
-			ES_INDEX,
-			requestor);
-		//map.addLayer(count);
-
-		/**
-		 * Micro / Macro layer
-		 */
-		const microMacro = Layers.microMacro(
-			meta[ES_TYPE],
-			ES_INDEX,
-			requestor);
-		//map.addLayer(microMacro);
-
-		/**
-		 * Wordcloud layer
-		 */
-		const wordcloud = Layers.wordcloud(
-			meta[ES_TYPE],
-			ES_INDEX,
-			requestor);
-		//map.addLayer(wordcloud);
-
-		/**
 		 * Topic layer
 		 */
 		const topic = Layers.topic(
@@ -159,25 +98,5 @@ window.startApp = function() {
 			ES_INDEX,
 			requestor);
 		map.addLayer(topic);
-
-		/**
-		 * Community Ring layer
-		 */
-		const communityRing = Layers.communityRing(
-			meta[ES_TYPE],
-			ES_INDEX,
-			256,
-			requestor);
-		//map.addLayer(communityRing);
-
-		/**
-		 * Community Label layer
-		 */
-		const communityLabel = Layers.communityLabel(
-			meta[ES_TYPE],
-			ES_INDEX,
-			5,
-			requestor);
-		//map.addLayer(communityLabel);
 	});
 };

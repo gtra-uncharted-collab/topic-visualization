@@ -18,8 +18,6 @@ class TopicDriver extends ui.Drilldown {
         this.getElement().on('click', '#topic-tiler', () => {
             this.onShowTopics();
         });
-
-        this.show();
     }
 
     onElementInserted() {
@@ -50,7 +48,6 @@ class TopicDriver extends ui.Drilldown {
 
     // Actions
     onShowTopics() {
-        this.onElementInserted()
         const include = $('[name=terms-include]').val();
         const exclude = $('[name=terms-exclude]').val();
         const exclusiveness = this.getIntParameter('algo-exclusiveness') || 0;
