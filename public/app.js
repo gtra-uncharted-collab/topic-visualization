@@ -42,7 +42,7 @@ function init(plot, callback) {
 
 	const control = new TopicDriver('Topics', plot);
 	$('.tile-controls').append(control.getElement());
-	control.show()
+	control.show();
 
 	// request everything at once in a blaze of glory
 	parallel(req, (err, res) => {

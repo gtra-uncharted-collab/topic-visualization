@@ -30,6 +30,8 @@ class TopicDriver extends ui.Drilldown {
 
     _createSlider(onSlideStop) {
         return new DateSliderGTRA({
+            min: 1356998400000, // January 1st 2013
+            max: 1425168000000, // March 1st 2015
             slideStop: values => {
                 onSlideStop(values);
             }
