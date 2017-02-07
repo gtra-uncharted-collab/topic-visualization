@@ -33,7 +33,7 @@ class DateSliderGTRA {
 		this._$container = $(template(spec));
 		this._$label = this._$container.find('.date-label');
 		// create slider and attach callbacks
-		this._$slider = new Slider(this._$container.find('.slider')[0], {
+		this._$slider = new Slider(this._$container.find('.slider-gtra')[0], {
 			tooltip: 'hide',
 		});
 		if ($.isFunction(spec.slideStart)) {

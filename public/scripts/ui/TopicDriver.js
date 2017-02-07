@@ -32,7 +32,6 @@ class TopicDriver extends ui.Drilldown {
 
     _createSlider(onSlideStop) {
         return new DateSliderGTRA({
-            label: 'Time Range',
             slideStop: values => {
                 onSlideStop(values);
             }
