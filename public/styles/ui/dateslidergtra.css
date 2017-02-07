@@ -1,0 +1,38 @@
+.layer-control-element-gtra {
+	background-color: rgba(0,0,0,0.5);
+	border-radius: 4px;
+	border: 1px solid #000;
+	padding: 4px;
+	margin-bottom: 10px;
+	white-space: nowrap;
+}
+
+.date-controls-gtra {
+	position: absolute;
+	bottom: 0;
+	left: calc(50% - 200px);
+	line-height: 20px;
+	text-align: center;
+	z-index: 2;
+}
+
+.date-slider-container-gtra {
+	position: absolute;
+	bottom: 0;
+}
+
+.date-slider-container-gtra .slider.slider-horizontal-gtra {
+	width: 200px;
+}
+
+.date-slider-label-gtra {
+	display: inline-block;
+	padding: 0 4px;
+	font-size: 12px;
+}
+
+.date-label-gtra {
+	display: inline-block;
+	padding: 0 4px;
+	font-size: 12px;
+}

@@ -1,5 +1,6 @@
 'use strict';
 
+const DateSliderGTRA = require('./DateSliderGTRA');
 const ui = require('veldt-ui');
 const veldt = require('veldt');
 const template = require('../templates/TopicDriver');
@@ -21,7 +22,7 @@ class TopicDriver extends ui.Drilldown {
         this.show();
     }
 
-    test() {
+    onElementInserted() {
         const timeSlider = this._createSlider(values => {
             this.timeFrom = values[0];
             this.timeTo = values[1];
@@ -50,7 +51,7 @@ class TopicDriver extends ui.Drilldown {
 
     // Actions
     onShowTopics() {
-        this.test()
+        this.onElementInserted()
         const include = $('[name=terms-include]').val();
         const exclude = $('[name=terms-exclude]').val();
         const exclusiveness = this.getIntParameter('algo-exclusiveness') || 0;
