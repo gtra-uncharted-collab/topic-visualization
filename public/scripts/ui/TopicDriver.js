@@ -12,8 +12,8 @@ class TopicDriver extends ui.Drilldown {
         this._dataset = dataset;
         this._currentNodeId = null;
         this.plot = plot;
-        this.timeFrom = 1;
-        this.timeTo = 1;
+        this.timeFrom = 1356998400000; // January 1st 2013
+        this.timeTo = 1425168000000; // March 1st 2015
 
         this.getElement().on('click', '#topic-tiler', () => {
             this.onShowTopics();
@@ -30,8 +30,8 @@ class TopicDriver extends ui.Drilldown {
 
     _createSlider(onSlideStop) {
         return new DateSliderGTRA({
-            min: 1356998400000, // January 1st 2013
-            max: 1425168000000, // March 1st 2015
+            min: this.timeFrom,
+            max: this.timeTo,
             slideStop: values => {
                 onSlideStop(values);
             }
@@ -63,7 +63,6 @@ class TopicDriver extends ui.Drilldown {
         const topicLayer = this.plot.layers.find(l => {
             return l.constructor === veldt.Layer.Topic;
         });
-		topicLayer.setRequestId(((new Date).getTime()).toString());
 		topicLayer.setInclude(include.split(',') || []);
 		topicLayer.setExclude(exclude.split(',') || []);
         topicLayer.setExclusiveness(exclusiveness);
@@ -75,19 +74,6 @@ class TopicDriver extends ui.Drilldown {
         if (topicLayer.hasUpdatedParameters()) {
             // All previously loaded tiles are no longer relevant.
             topicLayer.pyramid.clear();
-            topicLayer.setTileCount(coords.length);
-        } else {
-            // Only requesting tiles not already loaded as the parameters have not changed.
-            var newTileCount = 0;
-            coords.foreach(function(coord) {
-                const nCoord = coord.normalize();
-                const get = topicLayer.pyramid.get(nCoord);
-                const pending = topicLayer.pyramid.isPending(nCoord);
-                if (!get && !pending) {
-                    newTileCount++;
-                }
-            });
-            topicLayer.setTileCount(newTileCount);
         }
 
         topicLayer.unmute();
