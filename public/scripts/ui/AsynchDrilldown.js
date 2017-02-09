@@ -1,11 +1,14 @@
 'use strict';
 
-class AsynchDrilldown extends prism.ui.Drilldown {
+const ui = require('veldt-ui');
+const $ = require('jquery');
+
+class AsynchDrilldown extends ui.Drilldown {
     constructor(name, dataset, esEndpoint, esIndex) {
         super(name);
         this._dataset = dataset;
         this._currentNodeId = null;
-        this.esURL = `${esEndpoint}/${esIndex}/_search?`
+        this.esURL = `${esEndpoint}/${esIndex}/_search?`;
     }
 
     // creates a promise responsible for asynchronously fetching data from the

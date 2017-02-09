@@ -10,7 +10,8 @@ const TopicDrilldown = require('./scripts/ui/TopicDrilldown');
 
 const ES_PIPELINE = 'elastic';
 const ES_INDEX = 'patent_grant_references_v7'; //'trump_twitter';
-const ES_TYPE = 'datum';
+const ES_TYPE = 'tweet';
+const ES_ENDPOINT = 'http://elasticsearch-dev.uncharted.software:9200';
 
 function init(plot, callback) {
 	const req = {};
@@ -45,7 +46,7 @@ function init(plot, callback) {
 	$('.tile-controls').append(driver.getElement());
 	driver.show();
 
-	const drilldown = new TopicDrilldown('Tweets', plot);
+	const drilldown = new TopicDrilldown('Tweets', plot, {}, ES_ENDPOINT, ES_INDEX);
 	$('.tile-drilldown').append(drilldown.getElement());
 
 	// request everything at once in a blaze of glory

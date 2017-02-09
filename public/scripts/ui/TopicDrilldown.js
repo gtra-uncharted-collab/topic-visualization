@@ -7,9 +7,9 @@ const template = require('../templates/TopicDrilldown');
 const $ = require('jquery');
 const {jsonPostPromise} = require('../util/ajax');
 
-class TopicDrilldown extends ui.Drilldown {
-    constructor(name, plot, dataset) {
-        super(name);
+class TopicDrilldown extends AsynchDrilldown {
+    constructor(name, plot, dataset, esEndpoint, esIndex) {
+        super(name, dataset, esEndpoint, esIndex);
         this._dataset = dataset;
         this._currentNodeId = null;
         this.plot = plot;
@@ -22,6 +22,7 @@ class TopicDrilldown extends ui.Drilldown {
 
     recomputeBodyContext(data) {
         console.log("recompute");
+        console.log(data)
 
         const c = {};
 
@@ -36,7 +37,7 @@ class TopicDrilldown extends ui.Drilldown {
 
     show(data) {
         console.log("show");
-        super(data)
+        super.show(data)
     }
 
 }
