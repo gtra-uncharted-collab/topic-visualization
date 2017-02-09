@@ -46,6 +46,7 @@ function init(plot, callback) {
 	driver.show();
 
 	const drilldown = new TopicDrilldown('Tweets', plot);
+	$('.tile-drilldown').append(drilldown.getElement());
 
 	// request everything at once in a blaze of glory
 	parallel(req, (err, res) => {
@@ -57,7 +58,8 @@ function init(plot, callback) {
 		// execute callback
 		callback(null, {
 			requestor: res.requestor,
-			meta: res.meta
+			meta: res.meta,
+			drilldown: drilldown
 		});
 	});
 }
@@ -100,7 +102,7 @@ window.startApp = function() {
 			meta[ES_TYPE],
 			ES_INDEX,
 			requestor);
-		topic.renderer.on('click', event => drilldown.show(event.data));
+		topic.renderer.on('click', event => res.drilldown.show(event.data));
 		map.addLayer(topic);
 	});
 };

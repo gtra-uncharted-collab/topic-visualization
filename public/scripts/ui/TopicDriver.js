@@ -57,7 +57,7 @@ class TopicDriver extends ui.Drilldown {
         const wordCount = this.getIntParameter('count-word') || 3;
 
         // Determine which tiles are in view.
-        const coords = this.plot.getVisibleCoords(this.plot.tileSize, this.plot.zoom);
+        // const coords = this.plot.getVisibleCoords(this.plot.tileSize, this.plot.zoom);
 
         // Refresh all tiles in view. Unmuting requests all tiles in view!
         const topicLayer = this.plot.layers.find(l => {
