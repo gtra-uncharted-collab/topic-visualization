@@ -1,5 +1,6 @@
 'use strict';
 
+const AsynchDrilldown = require('./AsynchDrilldown');
 const ui = require('veldt-ui');
 const veldt = require('veldt');
 const template = require('../templates/TopicDrilldown');
@@ -20,6 +21,7 @@ class TopicDrilldown extends ui.Drilldown {
     }
 
     recomputeBodyContext(data) {
+        console.log("recompute");
 
         const c = {};
 
@@ -30,6 +32,11 @@ class TopicDrilldown extends ui.Drilldown {
         c.topic = data
 
         return c;
+    }
+
+    show(data) {
+        console.log("show");
+        super(data)
     }
 
 }

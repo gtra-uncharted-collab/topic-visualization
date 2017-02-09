@@ -1,6 +1,9 @@
 (function() {
 
     'use strict';
+    
+    const _ = require('lodash');
+    const $ = require('jquery');
 
     /**
      * Utils for doing ajax requests with standard es6/native Promises
