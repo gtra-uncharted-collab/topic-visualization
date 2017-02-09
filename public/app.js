@@ -6,6 +6,7 @@ const lumo = require('lumo');
 const parallel = require('async/parallel');
 const Layers = require('./scripts/layer/Layers');
 const TopicDriver = require('./scripts/ui/TopicDriver');
+const TopicDrilldown = require('./scripts/ui/TopicDrilldown');
 
 const ES_PIPELINE = 'elastic';
 const ES_INDEX = 'patent_grant_references_v7'; //'trump_twitter';
@@ -40,9 +41,11 @@ function init(plot, callback) {
 		});
 	};
 
-	const control = new TopicDriver('Topics', plot);
-	$('.tile-controls').append(control.getElement());
-	control.show();
+	const driver = new TopicDriver('Topics', plot);
+	$('.tile-controls').append(driver.getElement());
+	driver.show();
+
+	const drilldown = new TopicDrilldown('Tweets', plot);
 
 	// request everything at once in a blaze of glory
 	parallel(req, (err, res) => {
@@ -97,6 +100,7 @@ window.startApp = function() {
 			meta[ES_TYPE],
 			ES_INDEX,
 			requestor);
+		topic.renderer.on('click', event => drilldown.show(event.data));
 		map.addLayer(topic);
 	});
 };
