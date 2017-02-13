@@ -4,8 +4,17 @@
     </div>
     <div class="drilldown-item">
         {{#each tweets}}
+            <div class="drilldown-label">
+                <span>Username: </span>
+            </div>
             <div class="drilldown-item">
-                <span>{{this}}</span>
+                <span>{{_source.username}}</span>
+            </div>
+            <div class="drilldown-label">
+                <span>Tweet: </span>
+            </div>
+            <div class="drilldown-item">
+                <span>{{_source.text}}</span>
             </div>
         {{/each}}
     </div>
