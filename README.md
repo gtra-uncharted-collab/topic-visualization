@@ -22,6 +22,7 @@ Install dependencies
 ```bash
 cd veldt-app-template
 make install
+npm install
 ```
 
 ## Usage
