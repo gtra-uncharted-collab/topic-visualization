@@ -2,6 +2,8 @@ package: github.com/gtra-uncharted-collab/topic-visualization
 import:
 - package: github.com/unchartedsoftware/plog
 - package: github.com/unchartedsoftware/veldt
+  repo: git@github.com:unchartedsoftware/veldt.git#gtra-collab
+  vcs: git
   subpackages:
   - generation/elastic
   - generation/image

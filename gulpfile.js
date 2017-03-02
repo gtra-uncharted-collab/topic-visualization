@@ -34,7 +34,6 @@ const paths = {
 	],
 	links: [
 		`${nodeModules}/veldt/scripts/**/*.js`,
-		`${nodeModules}/veldt-ui/scripts/**/*.js`,
 		`${nodeModules}/lumo/src/**/*.js`,
 	],
 	styles: [
