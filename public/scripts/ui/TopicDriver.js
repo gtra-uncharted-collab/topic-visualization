@@ -12,7 +12,7 @@
 
     class TopicDriver extends Drilldown {
         constructor(name, plot, dataset) {
-            super(name);
+            super(name, false);
             this._dataset = dataset;
             this._currentNodeId = null;
             this.plot = plot;

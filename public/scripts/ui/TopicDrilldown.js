@@ -21,9 +21,6 @@
         }
 
         recomputeBodyContext(data) {
-            console.log("recompute");
-            console.log(data)
-
             const c = {};
 
             // local model

@@ -131,3 +131,31 @@ li.drilldown-list::before {
     margin: 0 10px;
     width: 120px;
 }
+
+.drilldown-close-button {
+    position:absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    font-size: 14;
+}
+
+.drilldown-close-button:hover {
+color:   #fff;
+}
+
+.drilldown-text {
+    font-size: 11px;
+    word-wrap: break-word;
+}
+
+.drilldown-title {
+    color: #fff;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.drilldown-body {
+    max-height: 400px;
+    overflow: auto;
+}

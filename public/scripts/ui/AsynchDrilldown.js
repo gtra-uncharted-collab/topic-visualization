@@ -7,7 +7,7 @@
 
     class AsynchDrilldown extends Drilldown {
         constructor(name, dataset, esEndpoint, esIndex) {
-            super(name);
+            super(name, true);
             this._dataset = dataset;
             this._currentNodeId = null;
             this.esURL = `${esEndpoint}/${esIndex}/_search?`;

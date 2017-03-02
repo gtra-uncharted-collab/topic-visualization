@@ -7,13 +7,15 @@ const template = require('../templates/Drilldown');
 const TIMEOUT = 500;
 
 class Drilldown {
-	constructor(title) {
+	constructor(title, canClose = true) {
 		this.title = _.isNil(title) ? '' : title;
+		this.canClose = canClose;
 		// create elements
 		this._$container = $('<div class="drilldown-container"></div>');
 		this._$container.append(template({
 			title: title,
-			body: ''
+			body: '',
+			canClose: canClose
 		}));
 		// set close handler
 		this._$container.on('click', '#close-button', () => {
@@ -74,6 +76,7 @@ class Drilldown {
 	recomputeContext(data) {
 		const c = {};
 		c.title = this.title;
+		c.canClose = this.canClose;
 		c.body = this.getBodyTemplate()(this.recomputeBodyContext(data));
 		return c;
 	}

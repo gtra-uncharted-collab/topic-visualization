@@ -9,7 +9,7 @@ const TopicDriver = require('./scripts/ui/TopicDriver');
 const TopicDrilldown = require('./scripts/ui/TopicDrilldown');
 
 const ES_PIPELINE = 'elastic';
-const ES_INDEX = 'patent_grant_references_v7'; //'trump_twitter';
+const ES_INDEX = 'nyc_twitter'; //'trump_twitter';
 const ES_TYPE = 'tweet';
 const ES_ENDPOINT = 'http://elasticsearch-dev.uncharted.software:9200';
 

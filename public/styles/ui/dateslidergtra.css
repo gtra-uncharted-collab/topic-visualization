@@ -33,10 +33,11 @@
 }
 
 .slider.slider-horizontal {
-    width: 210px;
-    height: 20px;
+	width: 210px;
+	height: 20px;
+	margin-left: 10px
 }
 
 .right-label {
-    float: right;
+	float: right;
 }
