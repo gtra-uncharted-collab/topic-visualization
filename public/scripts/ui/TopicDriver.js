@@ -4,13 +4,13 @@
     const DateSliderGTRA = require('./DateSliderGTRA');
     const SliderGTRA = require('./SliderGTRA');
     const moment = require('moment');
-    const ui = require('veldt-ui');
     const veldt = require('veldt');
     const template = require('../templates/TopicDriver');
     const $ = require('jquery');
+    const Drilldown = require('./Drilldown');
     const DAY_MS = 86400000;
 
-    class TopicDriver extends ui.Drilldown {
+    class TopicDriver extends Drilldown {
         constructor(name, plot, dataset) {
             super(name);
             this._dataset = dataset;

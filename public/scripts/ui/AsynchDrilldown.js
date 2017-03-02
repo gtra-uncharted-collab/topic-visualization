@@ -1,11 +1,11 @@
 (function () {
     'use strict';
 
-    const ui = require('veldt-ui');
     const $ = require('jquery');
     const Ajax = require('../util/ajax');
+    const Drilldown = require('./Drilldown');
 
-    class AsynchDrilldown extends ui.Drilldown {
+    class AsynchDrilldown extends Drilldown {
         constructor(name, dataset, esEndpoint, esIndex) {
             super(name);
             this._dataset = dataset;

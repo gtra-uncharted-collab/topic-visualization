@@ -2,7 +2,6 @@
     'use strict';
 
     const AsynchDrilldown = require('./AsynchDrilldown');
-    const ui = require('veldt-ui');
     const veldt = require('veldt');
     const template = require('../templates/TopicDrilldown');
     const $ = require('jquery');
