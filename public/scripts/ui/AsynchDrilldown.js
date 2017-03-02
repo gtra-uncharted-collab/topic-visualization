@@ -26,8 +26,12 @@
             });
         }
 
-        show(data, query) {
-            this.showAsynch(data, this.fetchDataAsynch(query));
+        show(data, query, showAsync = true) {
+            if (showAsync) {
+                this.showAsynch(data, this.fetchDataAsynch(query));
+            } else {
+                super.show(data)
+            }
         }
 
         hide() {

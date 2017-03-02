@@ -8,33 +8,8 @@ const Layers = require('./scripts/layer/Layers');
 const TopicDriver = require('./scripts/ui/TopicDriver');
 const TopicDrilldown = require('./scripts/ui/TopicDrilldown');
 
-const ES_PIPELINE = 'elastic';
-const ES_INDEX = 'nyc_twitter'; //'trump_twitter';
-const ES_TYPE = 'tweet';
-const ES_ENDPOINT = 'http://elasticsearch-dev.uncharted.software:9200';
-
 function init(plot, callback) {
 	const req = {};
-	// meta data reqs
-	req.meta = done => {
-		$.ajax({
-			url: 'meta',
-			method: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				pipeline: ES_PIPELINE,
-				uri: ES_INDEX,
-				meta: {
-					default: {}
-				}
-			}),
-			dataType: 'json'
-		}).done(meta => {
-			done(null, meta);
-		}).fail(err => {
-			done(err, null);
-		});
-	};
 	// tile requestor
 	req.requestor = done => {
 		const requestor = new veldt.Requestor('tile', () => {
@@ -46,7 +21,7 @@ function init(plot, callback) {
 	$('.tile-controls').append(driver.getElement());
 	driver.show();
 
-	const drilldown = new TopicDrilldown('Tweets', plot, {}, ES_ENDPOINT, ES_INDEX);
+	const drilldown = new TopicDrilldown('Tweets', plot, {}, '', '');
 	$('.tile-drilldown').append(drilldown.getElement());
 
 	// request everything at once in a blaze of glory
@@ -59,7 +34,6 @@ function init(plot, callback) {
 		// execute callback
 		callback(null, {
 			requestor: res.requestor,
-			meta: res.meta,
 			drilldown: drilldown
 		});
 	});
@@ -88,7 +62,6 @@ window.startApp = function() {
 		}
 
 		const requestor = res.requestor;
-		const meta = res.meta;
 
 		/**
 		 * CartoDB layer
@@ -100,8 +73,8 @@ window.startApp = function() {
 		 * Topic layer
 		 */
 		const topic = Layers.topic(
-			meta[ES_TYPE],
-			ES_INDEX,
+			{},
+			'',
 			requestor);
 		topic.renderer.on('click', event => res.drilldown.show(event.data));
 		map.addLayer(topic);

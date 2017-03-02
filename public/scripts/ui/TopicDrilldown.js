@@ -26,18 +26,13 @@
             // local model
             Object.assign(c, this.model);
 
-            // data will contain the clicked topic.
-            c.tweets = data.hits.hits;
-
             return c;
         }
 
         show(data) {
             this.model.topic = data;
-            // Build query to pull tweets with the clicked topic.
-            const query = {match: {text: data}};
 
-            super.show(data, query)
+            super.show(data, {}, false)
         }
 
     }
