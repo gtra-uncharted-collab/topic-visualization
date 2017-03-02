@@ -2,10 +2,13 @@
     'use strict';
 
     const DateSliderGTRA = require('./DateSliderGTRA');
+    const SliderGTRA = require('./SliderGTRA');
+    const moment = require('moment');
     const ui = require('veldt-ui');
     const veldt = require('veldt');
     const template = require('../templates/TopicDriver');
     const $ = require('jquery');
+    const DAY_MS = 86400000;
 
     class TopicDriver extends ui.Drilldown {
         constructor(name, plot, dataset) {
@@ -16,25 +19,45 @@
             this.timeFrom = 1356998400000; // January 1st 2013
             this.timeTo = 1425168000000; // March 1st 2015
 
+            this.exclusivenessFrom = 0;
+            this.exclusivenessTo = 5;
+            this.exclusiveness = 0;
+
             this.getElement().on('click', '#topic-tiler', () => {
                 this.onShowTopics();
             });
         }
 
         onElementInserted() {
-            const timeSlider = this._createSlider(values => {
-                this.timeFrom = values[0];
-                this.timeTo = values[1];
+            const timeSlider = this._createSlider(value => {
+                this.timeFrom = value;
+                this.timeTo = value;
             });
             $('#slider-time').append(timeSlider.getElement());
+
+            const exclusivenessSlider = new SliderGTRA({
+                ticks: [0, 1, 2, 3, 4, 5],
+                initialValue: this.exclusiveness,
+                lowerLabel: 'low',
+                upperLabel: 'high',
+                slideStop: value => {
+                    this.exclusiveness = value;
+                }
+            });
+            $('#slider-exclusiveness').append(exclusivenessSlider.getElement());
         }
 
         _createSlider(onSlideStop) {
-            return new DateSliderGTRA({
+            return new SliderGTRA({
                 min: this.timeFrom,
                 max: this.timeTo,
-                slideStop: values => {
-                    onSlideStop(values);
+                step: DAY_MS,
+                initialValue: this.timeFrom,
+                slideStop: value => {
+                    onSlideStop(value);
+                },
+                formatter: value => {
+                    return `${moment.utc(value).format('MMM Do YYYY')}`;
                 }
             });
         }
@@ -53,7 +76,6 @@
         onShowTopics() {
             const include = $('[name=terms-include]').val();
             const exclude = $('[name=terms-exclude]').val();
-            const exclusiveness = this.getIntParameter('algo-exclusiveness') || 0;
             const clusterCount = this.getIntParameter('count-cluster') || 3;
             const wordCount = this.getIntParameter('count-word') || 3;
 
@@ -66,7 +88,7 @@
             });
     		topicLayer.setInclude(include.split(',') || []);
     		topicLayer.setExclude(exclude.split(',') || []);
-            topicLayer.setExclusiveness(exclusiveness);
+            topicLayer.setExclusiveness(this.exclusiveness);
             topicLayer.setTopicWordCount(wordCount);
             topicLayer.setTopicClusterCount(clusterCount);
             topicLayer.setTimeFrom(this.timeFrom);

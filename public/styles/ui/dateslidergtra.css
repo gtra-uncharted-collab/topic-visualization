@@ -26,3 +26,17 @@
 	padding: 0 4px;
 	font-size: 12px;
 }
+
+.control-value-label {
+	padding: 0 4px;
+	font-size: 12px;
+}
+
+.slider.slider-horizontal {
+    width: 210px;
+    height: 20px;
+}
+
+.right-label {
+    float: right;
+}

@@ -4,6 +4,7 @@ const _ = require('lodash');
 const $ = require('../util/jQueryAjaxArrayBuffer');
 const lumo = require('lumo');
 const veldt = require('veldt');
+const TopicRenderer = require('../render/html/Topic');
 
 function liveRequest(pipeline, requestor, index, type, xyz) {
 	return function(coord, done) {
@@ -262,7 +263,7 @@ module.exports = {
 	 */
 	topic: function(meta, index, requestor) {
 		const layer = new veldt.Layer.Topic(meta, {
-			renderer: new veldt.Renderer.HTML.WordCloud()
+			renderer: new TopicRenderer()
 		});
 		layer.setX('pixel.x', 0, Math.pow(2, 32));
 		layer.setY('pixel.y', 0, Math.pow(2, 32));
