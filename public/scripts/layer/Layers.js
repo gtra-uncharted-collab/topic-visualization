@@ -6,7 +6,7 @@ const lumo = require('lumo');
 const veldt = require('veldt');
 const TopicRenderer = require('../render/html/Topic');
 
-function liveRequest(pipeline, requestor, index, type, xyz) {
+function liveRequest(pipeline, requestor, index, type, xyz, name) {
 	return function(coord, done) {
 		const req = {
 			pipeline: pipeline,
@@ -16,7 +16,7 @@ function liveRequest(pipeline, requestor, index, type, xyz) {
 				x: coord.x,
 				y: xyz ? Math.pow(2, coord.z) - 1 - coord.y : coord.y
 			},
-			tile: this.getTile(),
+			tile: this.getTile(name),
 			query: this.getQuery ? this.getQuery() : null
 		};
 		requestor
@@ -49,12 +49,12 @@ function liveRequest(pipeline, requestor, index, type, xyz) {
 	};
 }
 
-function liveRequestJSON(pipeline, requestor, index, xyz = false) {
-	return liveRequest(pipeline, requestor, index, 'json', xyz);
+function liveRequestJSON(pipeline, requestor, index, xyz = false, name = undefined) {
+	return liveRequest(pipeline, requestor, index, 'json', xyz, name);
 }
 
-function liveRequestBuffer(pipeline, requestor, index, xyz = false) {
-	return liveRequest(pipeline, requestor, index, 'arraybuffer', xyz);
+function liveRequestBuffer(pipeline, requestor, index, xyz = false, name = undefined) {
+	return liveRequest(pipeline, requestor, index, 'arraybuffer', xyz, name);
 }
 
 module.exports = {
@@ -269,6 +269,23 @@ module.exports = {
 		layer.setY('pixel.y', 0, Math.pow(2, 32));
 		layer.mute();
 		layer.requestTile = liveRequestJSON('remote', requestor, index);
+		return layer;
+	},
+
+	/**
+	 * Exclusiveness Layer
+	 */
+	exclusiveness: function(meta, index, ramp, requestor) {
+		const layer = new veldt.Layer.Exclusiveness(meta, {
+			renderer: new veldt.Renderer.WebGL.Heatmap({
+				colorRamp: ramp
+			})
+		});
+		layer.setX('pixel.x', 0, Math.pow(2, 32));
+		layer.setY('pixel.y', 0, Math.pow(2, 32));
+		layer.setResolution(1);
+		layer.mute();
+		layer.requestTile = liveRequestBuffer('remote', requestor, index, false, 'exclusiveness');
 		return layer;
 	},
 

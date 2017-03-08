@@ -101,6 +101,16 @@
 
             topicLayer.unmute();
             topicLayer.mute();
+
+            // Update the exclusiveness heatmap tile.
+            const exLayer = this.plot.layers.find(l => {
+                return l.constructor === veldt.Layer.Exclusiveness;
+            });
+            exLayer.setTimeFrom(this.timeFrom);
+            exLayer.setTimeTo(this.timeTo);
+
+            exLayer.unmute();
+            exLayer.mute();
         }
 
     }

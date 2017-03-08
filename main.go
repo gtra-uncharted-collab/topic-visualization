@@ -83,6 +83,7 @@ func NewRemotePipeline() *veldt.Pipeline {
 
 	// Add tiles types to the pipeline
 	pipeline.Tile("topic", remote.NewTopicTile())
+	pipeline.Tile("exclusiveness", remote.NewHitmapTile())
 
 	// Set the maximum concurrent tile requests
 	pipeline.SetMaxConcurrent(256)

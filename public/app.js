@@ -78,5 +78,15 @@ window.startApp = function() {
 			requestor);
 		topic.renderer.on('click', event => res.drilldown.show(event.data));
 		map.addLayer(topic);
+
+		/**
+		 * Hitmap layer
+		 */
+		const hitmap = Layers.exclusiveness(
+			{},
+			'',
+			'hot',
+			requestor);
+		map.addLayer(hitmap);
 	});
 };
