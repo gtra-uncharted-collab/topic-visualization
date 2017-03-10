@@ -1,7 +1,6 @@
 'use strict';
 
 const _ = require('lodash');
-const $ = require('jquery');
 const veldt = require('veldt');
 //const ColorRamp = require('veldt/render/color/ColorRamp');
 
@@ -16,7 +15,6 @@ class Topic extends veldt.Renderer.HTML.WordCloud {
     }
 
     drawTile(element, tile) {
-        console.log(tile.data)
         const wordCounts = _.flatMap(tile.data, (value, key) => {
             return _.map(value.words, (weight, word) => {
     			return {

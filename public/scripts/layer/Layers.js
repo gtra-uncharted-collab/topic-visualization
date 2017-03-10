@@ -284,6 +284,7 @@ module.exports = {
 		layer.setX('pixel.x', 0, Math.pow(2, 32));
 		layer.setY('pixel.y', 0, Math.pow(2, 32));
 		layer.setResolution(1);
+		layer.opacity = 0.2;
 		layer.mute();
 		layer.requestTile = liveRequestBuffer('remote', requestor, index, false, 'exclusiveness');
 		return layer;

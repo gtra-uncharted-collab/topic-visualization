@@ -12,15 +12,15 @@
 Clone the repository:
 
 ```bash
-mkdir -p $GOPATH/src/github.com/unchartedsoftware
-cd $GOPATH/src/github.com/unchartedsoftware
-git clone git@github.com:unchartedsoftware/veldt-app-template.git
+mkdir -p $GOPATH/src/github.com/gtra-uncharted-collab
+cd $GOPATH/src/github.com/gtra-uncharted-collab
+git clone git@github.com:gtra-uncharted-collab/topic-visualization.git
 ```
 
 Install dependencies
 
 ```bash
-cd veldt-app-template
+cd topic-visualization
 make install
 npm install
 ```
