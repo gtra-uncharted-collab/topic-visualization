@@ -14,12 +14,20 @@ class TopicDriver extends Drilldown {
         this._dataset = dataset;
         this._currentNodeId = null;
         this.plot = plot;
-        this.timeFrom = 1356998400000; // January 1st 2013
-        this.timeTo = 1425168000000; // March 1st 2015
 
-        this.exclusivenessFrom = 0;
-        this.exclusivenessTo = 5;
-        this.exclusiveness = 0;
+        this.model = {
+            exclusivenessFrom: 0,
+            exclusivenessTo: 5,
+            exclusiveness: 0,
+            timeFromLimit: 1356998400000, // January 1st 2013
+            timeToLimit: 1425168000000, // March 1st 2015
+            timeFrom: 1356998400000,
+            timeTo: 1356998400000,
+            clusterCount: 3,
+            wordCount: 3,
+            include: '',
+            exclude: ''
+        };
 
         this.getElement().on('click', '#topic-tiler', () => {
             this.onShowTopics();
@@ -28,18 +36,18 @@ class TopicDriver extends Drilldown {
 
     onElementInserted() {
         const timeSlider = this._createSlider(value => {
-            this.timeFrom = value;
-            this.timeTo = value;
+            this.model.timeFrom = value;
+            this.model.timeTo = value;
         });
         $('#slider-time').append(timeSlider.getElement());
 
         const exclusivenessSlider = new SliderGTRA({
             ticks: [0, 1, 2, 3, 4, 5],
-            initialValue: this.exclusiveness,
+            initialValue: this.model.exclusiveness,
             lowerLabel: 'low',
             upperLabel: 'high',
             slideStop: value => {
-                this.exclusiveness = value;
+                this.model.exclusiveness = value;
             }
         });
         $('#slider-exclusiveness').append(exclusivenessSlider.getElement());
@@ -47,10 +55,10 @@ class TopicDriver extends Drilldown {
 
     _createSlider(onSlideStop) {
         return new SliderGTRA({
-            min: this.timeFrom,
-            max: this.timeTo,
+            min: this.model.timeFromLimit,
+            max: this.model.timeToLimit,
             step: DAY_MS,
-            initialValue: this.timeFrom,
+            initialValue: this.model.timeFrom,
             slideStop: value => {
                 onSlideStop(value);
             },
@@ -64,6 +72,10 @@ class TopicDriver extends Drilldown {
         return template;
     }
 
+	recomputeBodyContext(data) {
+		return this.model;
+	}
+
     getIntParameter(parameterName) {
         const value = $('[name=' + parameterName + ']').val();
 
@@ -74,23 +86,20 @@ class TopicDriver extends Drilldown {
     onShowTopics() {
         const include = $('[name=terms-include]').val();
         const exclude = $('[name=terms-exclude]').val();
-        const clusterCount = this.getIntParameter('count-cluster') || 3;
-        const wordCount = this.getIntParameter('count-word') || 3;
-
-        // Determine which tiles are in view.
-        // const coords = this.plot.getVisibleCoords(this.plot.tileSize, this.plot.zoom);
+        const clusterCount = this.getIntParameter('count-cluster') || this.model.clusterCount;
+        const wordCount = this.getIntParameter('count-word') || this.model.wordCount;
 
         // Refresh all tiles in view. Unmuting requests all tiles in view!
         const topicLayer = this.plot.layers.find(l => {
             return l.constructor === veldt.Layer.Topic;
         });
-		topicLayer.setInclude(include.split(',') || []);
-		topicLayer.setExclude(exclude.split(',') || []);
-        topicLayer.setExclusiveness(this.exclusiveness);
+		topicLayer.setInclude(include.split(',') || this.model.include.split(','));
+		topicLayer.setExclude(exclude.split(',') || this.model.exclude.split(','));
+        topicLayer.setExclusiveness(this.model.exclusiveness);
         topicLayer.setTopicWordCount(wordCount);
         topicLayer.setTopicClusterCount(clusterCount);
-        topicLayer.setTimeFrom(this.timeFrom);
-        topicLayer.setTimeTo(this.timeTo);
+        topicLayer.setTimeFrom(this.model.timeFrom);
+        topicLayer.setTimeTo(this.model.timeTo);
 
         if (topicLayer.hasUpdatedParameters()) {
             // All previously loaded tiles are no longer relevant.
@@ -104,8 +113,13 @@ class TopicDriver extends Drilldown {
         const exLayer = this.plot.layers.find(l => {
             return l.constructor === veldt.Layer.Exclusiveness;
         });
-        exLayer.setTimeFrom(this.timeFrom);
-        exLayer.setTimeTo(this.timeTo);
+        exLayer.setTimeFrom(this.model.timeFrom);
+        exLayer.setTimeTo(this.model.timeTo);
+
+        if (exLayer.hasUpdatedParameters()) {
+            // All previously loaded tiles are no longer relevant.
+            exLayer.pyramid.clear();
+        }
 
         exLayer.unmute();
         exLayer.mute();

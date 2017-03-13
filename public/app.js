@@ -34,7 +34,8 @@ function init(plot, callback) {
 		// execute callback
 		callback(null, {
 			requestor: res.requestor,
-			drilldown: drilldown
+			drilldown: drilldown,
+			driver: driver
 		});
 	});
 }
@@ -77,6 +78,7 @@ window.startApp = function() {
 			'',
 			requestor);
 		topic.renderer.on('click', event => res.drilldown.show(event.data));
+		topic.mute();
 		map.addLayer(topic);
 
 		/**
@@ -87,6 +89,9 @@ window.startApp = function() {
 			'',
 			'hot',
 			requestor);
+		hitmap.mute();
 		map.addLayer(hitmap);
+
+		res.driver.onShowTopics();
 	});
 };
