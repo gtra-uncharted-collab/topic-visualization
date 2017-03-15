@@ -102,15 +102,13 @@ class TopicDriver extends Drilldown {
         topicLayer.setTimeFrom(this.model.timeFrom);
         topicLayer.setTimeTo(this.model.timeTo);
 
+        topicLayer.unmute();
         if (topicLayer.hasUpdatedParameters()) {
             // All previously loaded tiles are no longer relevant.
-            topicLayer.pyramid.clear();
+            topicLayer.refresh();
+            topicLayer.resetParameters();
         }
-
-        topicLayer.unmute();
         topicLayer.mute();
-
-        topicLayer.resetParameters();
 
         // Update the exclusiveness heatmap tile.
         const exLayer = this.plot.layers.find(l => {
@@ -119,12 +117,12 @@ class TopicDriver extends Drilldown {
         exLayer.setTimeFrom(this.model.timeFrom);
         exLayer.setTimeTo(this.model.timeTo);
 
+        exLayer.unmute();
         if (exLayer.hasUpdatedParameters()) {
             // All previously loaded tiles are no longer relevant.
-            exLayer.pyramid.clear();
+            exLayer.refresh();
+            exLayer.resetParameters();
         }
-
-        exLayer.unmute();
         exLayer.mute();
     }
 
