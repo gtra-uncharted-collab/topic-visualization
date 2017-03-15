@@ -93,6 +93,7 @@ class TopicDriver extends Drilldown {
         const topicLayer = this.plot.layers.find(l => {
             return l.constructor === veldt.Layer.Topic;
         });
+
 		topicLayer.setInclude(include.split(',') || this.model.include.split(','));
 		topicLayer.setExclude(exclude.split(',') || this.model.exclude.split(','));
         topicLayer.setExclusiveness(this.model.exclusiveness);
@@ -108,6 +109,8 @@ class TopicDriver extends Drilldown {
 
         topicLayer.unmute();
         topicLayer.mute();
+
+        topicLayer.resetParameters();
 
         // Update the exclusiveness heatmap tile.
         const exLayer = this.plot.layers.find(l => {

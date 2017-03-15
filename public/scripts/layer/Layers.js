@@ -22,11 +22,6 @@ function liveRequest(pipeline, requestor, index, type, xyz, name) {
 		requestor
 			.get(req)
 			.done(url => {
-				if (this.pyramid.isStale(coord)) {
-					// the tile is now stale, don't waste effort requesting it
-					done(new Error('stale tile'), null);
-					return;
-				}
 				$.ajax({
 					url: url,
 					method: 'POST',
@@ -265,8 +260,8 @@ module.exports = {
 		const layer = new veldt.Layer.Topic(meta, {
 			renderer: new TopicRenderer()
 		});
-		layer.setX('pixel.x', 0, Math.pow(2, 32));
-		layer.setY('pixel.y', 0, Math.pow(2, 32));
+		layer.setXField('pixel.x');
+		layer.setYField('pixel.y');
 		layer.requestTile = liveRequestJSON('remote', requestor, index);
 		return layer;
 	},
@@ -280,8 +275,8 @@ module.exports = {
 				colorRamp: ramp
 			})
 		});
-		layer.setX('pixel.x', 0, Math.pow(2, 32));
-		layer.setY('pixel.y', 0, Math.pow(2, 32));
+		layer.setXField('pixel.x');
+		layer.setYField('pixel.y');
 		layer.setResolution(1);
 		layer.opacity = 0.2;
 		layer.requestTile = liveRequestBuffer('remote', requestor, index, false, 'exclusiveness');
