@@ -79,3 +79,13 @@ body {
 	z-index: 2;
 	height: 410px;
 }
+
+.layer-toggle {
+	cursor: pointer;
+	line-height: 20px;
+	width: 24px;
+	font-size: 18px;
+	padding-right: 8px;
+	float: right;
+	color: #ffffff;
+}

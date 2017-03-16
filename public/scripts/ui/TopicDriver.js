@@ -51,6 +51,12 @@ class TopicDriver extends Drilldown {
             }
         });
         $('#slider-exclusiveness').append(exclusivenessSlider.getElement());
+
+		this._$toggleIcon = $('.layer-toggle i');
+		this._$toggle = $('.layer-toggle');
+		this._$toggle.click(() => {
+			this.toggleEnabled();
+		});
     }
 
     _createSlider(onSlideStop) {
@@ -125,6 +131,33 @@ class TopicDriver extends Drilldown {
         }
         exLayer.mute();
     }
+
+	toggleEnabled() {
+        const exLayer = this.plot.layers.find(l => {
+            return l.constructor === veldt.Layer.Exclusiveness;
+        });
+
+		if (exLayer.isDisabled()) {
+			this.enable(exLayer);
+		} else {
+			this.disable(exLayer);
+		}
+		return this;
+	}
+
+	disable(layer) {
+		layer.disable();
+		this._$toggleIcon.removeClass('fa-check-square-o');
+		this._$toggleIcon.addClass('fa-square-o');
+		return this;
+	}
+
+	enable(layer) {
+		layer.enable();
+		this._$toggleIcon.removeClass('fa-square-o');
+		this._$toggleIcon.addClass('fa-check-square-o');
+		return this;
+	}
 
 }
 
