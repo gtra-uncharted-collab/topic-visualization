@@ -45,7 +45,9 @@ window.startApp = function() {
 	// Map control
 	const map = new lumo.Plot('#map', {
 		continuousZoom: false,
-		zoom: 10
+		zoom: 10,
+		minZoom: 9,
+		maxZoom: 13
 	});
 	// Center on NYC.
 	map.viewport.centerOn(

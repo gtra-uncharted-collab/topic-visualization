@@ -62,12 +62,16 @@ body {
 .topic-term {
 	float: right;
 	width: 70%;
+	background: none;
+	color: #FFFFFF;
 }
 
 .topic-count {
 	position: absolute;
 	left: 120px;
 	width: 20px;
+	background: none;
+	color: #FFFFFF;
 }
 
 .drilldown-container {
